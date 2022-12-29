@@ -1,19 +1,48 @@
 import React, { createContext, useContext, useReducer } from 'react';
-import { DummyContent, Column, padding } from './Components';
 import './App.scss';
 import { Main } from './Main';
+import { createCritique, createStategy, makeId } from './utils';
 
 export const AppContext = createContext();
 
 const reducer = (state, action) => {
-	const { type } = action;
+	const { type, value } = action;
 	switch (type) {
+		case 'SET_NAV':
+			return {
+				...state,
+				...value,
+			};
+		case 'SET_SELECTED_STRATEGY':
+			return {
+				...state,
+				selectedStrategy: value,
+			};			
+		case 'UPDATE_STRATEGY':
+			return {
+				...state,
+				strategies: state.strategies.map((strategy) => (
+					strategy.id === state.selectedStrategy
+						? value
+						: strategy
+				))
+			};
 		case 'ADD_STRATEGY':
 			return {
 				...state,
 				strategies: [...state.strategies, {}]
 			};
-		case 'ADD_STRATEGY':
+		case 'REMOVE_STRATEGY':
+			return {
+				...state,
+				strategies: [...state.strategies, {}]
+			};
+		case 'ADD_CRITIQUE':
+			return {
+				...state,
+				strategies: [...state.strategies, {}]
+			};
+		case 'REMOVE_CRITIQUE':
 			return {
 				...state,
 				strategies: [...state.strategies, {}]
@@ -24,9 +53,13 @@ const reducer = (state, action) => {
 			};
 	}
 }
+
+const strategies = new Array(5).fill('').map(() => createStategy());
 const initialState = {
-	tab: 'strategies',
-	strategies: []
+	primaryNav: 'strategies',
+	secondaryNav: 'strategy',
+	strategies,
+	selectedStrategy: strategies[0].id,
 };
 
 export const App = () => {
