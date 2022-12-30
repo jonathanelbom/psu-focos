@@ -1,5 +1,6 @@
 {
   "name": "psu-focos",
+  "homepage": "https://jonathanelbom.github.io/psu-focos",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
