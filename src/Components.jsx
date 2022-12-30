@@ -1,70 +1,43 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, Typography, Grid, Slider, Input } from '@mui/material';
 import { useApp } from './App';
-import { color, scroll_signifier, shadow } from './styles';
+import { color, scroll_signifier } from './styles';
 
-export const padding = '16px';
+export const InputSlider = ({label = "Slider label", value = 0, callback}) => {
+	const [tempValue, setTempValue] = React.useState(value);
+	const timeoutId = useRef(null);
 
-const dummyItems = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?'.split('. ').map((item) => {
-	const parts = item.split(' ');
-	return {
-		title: parts.slice(0, 3).join(' '),
-		body: parts.slice(3).join(' '),
+	useEffect(() => {
+		return () => {
+			clearTimeout(timeoutId.current);	
+			timeoutId.current = null;
+		}
+	}, []);
+
+	const handleChange = (newValue, immediate) => {
+		setTempValue(newValue);
+		clearTimeout(timeoutId.current);
+		timeoutId.current = setTimeout(() => {
+			callback(newValue);
+		}, immediate ? 0 : 750);
 	}
-});
 
-export const DummyContent = () => (
-	<div
-		style={{
-			display: 'flex',
-			rowGap: '16px',
-			flexDirection: 'column',
-			// padding: '16px',
-		}}
-	>
-		{dummyItems.map((item, index) => (
-			<div
-				key={index}
-				style={{
-					padding,
-					borderRadius: '8px',
-					backgroundColor: '#fff',
-					display: 'flex',
-					rowGap: '12px',
-					flexDirection: 'column',
-				}}
-			>
-				<div style={{ fontSize: '20px' }}>{item.title}</div>
-				<div style={{ fontSize: '16px' }}>{item.body}</div>
-			</div>
-		))}
-	</div>
-)
-
-
-export const InputSlider = ({label = "Slider label", _value = 0, callback}) => {
-	const [value, setValue] = React.useState(_value);
-	const doSetValue = (newValue) => {
-		setValue(newValue);
-	}
 	const handleSliderChange = (event, newValue) => {
-		setValue(newValue);
+		handleChange(newValue);
 	};
 
 	const handleInputChange = (event) => {
-		setValue(event.target.value === '' ? '' : Number(event.target.value));
+		handleChange(event.target.value === '' ? '' : Number(event.target.value));
 	};
 
 	const handleBlur = () => {
-		let newValue = value;
-		if (value < 0) {
-			newValue = 0;
-		} else if (value > 100) {
-			newValue = 100;
+		if (tempValue < 0) {
+			handleChange(0, true);
+		} else if (tempValue > 100) {
+			handleChange(100, true)
 		}
-		doSetValue(newValue);
 	};
-
+	const valueToUse = tempValue !== value ? tempValue : value;
 	return (
 		<Box
 			sx={{
@@ -79,14 +52,14 @@ export const InputSlider = ({label = "Slider label", _value = 0, callback}) => {
 			<Grid container spacing={2} alignItems="center">
 				<Grid item xs>
 					<Slider
-						value={typeof value === 'number' ? value : 0}
+						value={valueToUse} // typeof value === 'number' ? value : 0}
 						onChange={handleSliderChange}
 						aria-labelledby="input-slider"
 					/>
 				</Grid>
 				<Grid item>
 					<Input
-						value={value}
+						value={valueToUse}
 						size="small"
 						onChange={handleInputChange}
 						onBlur={handleBlur}
@@ -104,18 +77,18 @@ export const InputSlider = ({label = "Slider label", _value = 0, callback}) => {
 	);
 }
 
-export const TextArea = ({ value, callback, sx }) => {
-	const [tempValue, setSetValue] = useState('');
+// export const TextArea = ({ value, callback, sx }) => {
+// 	const [tempValue, setSetValue] = useState('');
 
-	return (
-		<Box
-			contentEditable
-			onBlur={() => { }}
-		>
+// 	return (
+// 		<Box
+// 			contentEditable
+// 			onBlur={() => { }}
+// 		>
 
-		</Box>
-	)
-}
+// 		</Box>
+// 	)
+// }
 
 export const ColumnHeader = ({ children, sx }) => {
 	return (
@@ -132,6 +105,7 @@ export const ColumnHeader = ({ children, sx }) => {
 				justifyContent: 'center',
 				textTransform: 'uppercase',
 				fontSize: '14px',
+				borderInlineEnd: `1px solid ${color.border_layout}`,
 				...(sx && sx)
 
 			}}
@@ -155,6 +129,7 @@ export const ColumnFooter = ({ children, sx }) => {
 				zIndex: 1,
 				display: 'flex',
 				justifyContent: 'center',
+				borderInlineEnd: `1px solid ${color.border_layout}`,
 				...(sx && sx),
 
 			}}
@@ -164,7 +139,7 @@ export const ColumnFooter = ({ children, sx }) => {
 	);
 }
 
-export const Column = ({ header, children, footer, style }) => {
+export const Column = ({ header, children, footer, sx }) => {
 	// const gridTemplateRows = `${header ? 'min-content ' : ''}1fr${footer ? ' min-content' : ''}`;
 	const { state, dispatch } = useApp();
 	const [topIntersecting, setTopIntersecting] = useState(false);
@@ -174,13 +149,14 @@ export const Column = ({ header, children, footer, style }) => {
 	const refBottom = useRef(null);
 	const callback = (entries, observer) => {
 		entries.forEach(entry => {
+			// console.log(entry);
 			entry.target === refTop.current
 				? setTopIntersecting(entry.isIntersecting)
 				: setBottomIntersecting(entry.isIntersecting)
 		});
 	}
 	useEffect(() => {
-		const options = { root: ref.current };
+		const options = { root: ref.current, margin: 0 };
 		const observerTop = new IntersectionObserver(callback, options);
 		const observerBottom = new IntersectionObserver(callback, options);
 		refTop.current && observerTop.observe(refTop.current);
@@ -199,7 +175,7 @@ export const Column = ({ header, children, footer, style }) => {
 				flexDirection: 'column',
 				// display: 'grid',
 				// gridTemplateRows: `${header ? 'min-content ' : ''}1fr${footer ? ' min-content' : ''}`,
-				...(style && style)
+				...(sx && sx)
 			}}
 		>
 			{header && (
@@ -207,7 +183,7 @@ export const Column = ({ header, children, footer, style }) => {
 					{header}
 				</Box>
 			)}
-			<Box ref={ref} style={{ overflow: 'auto', padding: '16px', flexGrow: 1 }}>
+			<Box ref={ref} sx={{ overflow: 'auto', padding: '16px', flexGrow: 1 }}>
 				<Box ref={refTop} />
 				{children}
 				<Box ref={refBottom} />

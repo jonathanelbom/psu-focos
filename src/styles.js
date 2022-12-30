@@ -7,11 +7,29 @@ const _color = {
     gray_500: '#a2a3a5',
     gray_400: '#828385',
     gray_300: '#626365',
-    // gray_300: '#323335',
     gray_200: '#424345',
     gray_100: '#181313',
     blue_50: blue[50],
     blue_700: blue[700],
+};
+
+export const card = {
+    title: {
+        fontSize: '16px'
+    }
+};
+
+export const button = {
+    footer: {
+        backgroundColor: '#fff',
+        width: '100%',
+        '&:hover': {
+            backgroundColor: '#fff',
+        },
+        '&:active': {
+            backgroundColor: '#fff',
+        }
+    }
 };
 
 export const color = {
@@ -20,6 +38,9 @@ export const color = {
     grad_dark_light: _color.gray_400,
     grad_dark_medium: _color.gray_300,
     grad_dark_dark: _color.gray_200,
+    column_primary: _color.gray_700,
+    column_secondary: _color.gray_800,
+    column_tertiary: _color.gray_900,
     ..._color,
 }
 
@@ -29,19 +50,12 @@ export const shadow = {
 
 const shadow_line = {
     below: {
-        background: 'linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 100%)'
+        background: 'linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%)'
     },
     above: {
-        background: 'linear-gradient(0deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 100%)'
+        background: 'linear-gradient(0deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%)'
     }
 } 
-
-// export const scroll_signifier = {
-//     // boxShadow: shadow.medium,
-//     ...shadow_line.below,
-//     position: 'relative',
-//     zIndex: '1'
-// };
 
 const scroll_signifier_height = '8px';
 const scroll_signifier_base = {

@@ -1,6 +1,4 @@
-export const makeId = (prefix = '', length = 6) => `${prefix}${Math.random().toString(36).substr(2, 2 + length)}`;
-
-export const sliders = {
+export const practices = {
     'stop-work-authority': {
         label: 'Stop-Work Authority',
         id: 'stop-work-authority',
@@ -81,17 +79,10 @@ export const sliders = {
     }
 };
 
-const createSliders = () => (
-    Object.keys(sliders).reduce((acc, cur) => {
-        acc[cur] = {...sliders[cur]};
-        return acc;
-    }, {})
-);
-
-export const slidersForDisplay = [
+export const practicesForDisplay = [
     {
         category: 'Reframing Work Design',
-        items:[
+        practices: [
             'stop-work-authority',
             'emotional-ambivalence',
             'managing-reliability-drift',
@@ -99,7 +90,7 @@ export const slidersForDisplay = [
     },
     {
         category: 'Reframing Work Training',
-        items: [
+        practices: [
             'emergency-drills',
             'tabletop-exercises',
             'just-in-time-learning',
@@ -108,143 +99,89 @@ export const slidersForDisplay = [
     },
     {
         category: 'Reframing Relating Colleagues Peers',
-        items: [
+        practices: [
             'institutionalizing-prosocial-motivation',
             'fostering-social-ties-and-mutual-respect',
         ],
     },
     {
         category: 'Reframing How the Work Should Be Done',
-        items: [
+        practices: [
             'practicing-mindfulness',
             'fostering-sense-of-accountability'
         ],
     },
     {
         category: 'Reframing Work Communication',
-        items: [
+        practices: [
             'implementing-safety-huddles',
             'reporting-near-misses-incidents',
         ],
     }
 ];
 
+
+export const practicesForCritique = practicesForDisplay.flatMap((category) => (
+    category.practices.flatMap((id) => (
+        {
+            id,
+            label: practices[id].label
+        }
+    ))
+));
+
+export const makeId = (prefix = '', length = 6) => `${prefix}${Math.random().toString(36).substr(2, 2 + length)}`;
+
+const getRandomValue = (range = [0, 100]) =>
+    range[0] + Math.round((range[1] - range[0]) * Math.random());
+
+const createPractices = () => (
+    Object.keys(practices).reduce((acc, cur) => {
+        acc[cur] = {
+            ...practices[cur],
+            value: getRandomValue(),
+        };
+        return acc;
+    }, {})
+);
+
+export const getSelected = (strategies) => {
+    if (strategies.length > 0) {
+        const strategy = strategies[0];
+        return {
+            selectedStrategy: strategy.id,
+            selectedCritique: strategy.critiques.length > 0 ? strategy.critiques[0].id : '',
+        }
+    }
+    return {
+        selectedStrategy: '',
+        selectedCritique: '',
+    }
+}
+
 export const createStategy = (props = {}) => {
 	const id = makeId();
 	return {
 		id,
-		name: `Strategy ${id}`,
-		description: '[Description goes here]',
-		model: 'V1',
+		name: 'Strategy',
+		description: 'A description of this strategy',
+		model: 'V00.01',
 		lastModified: new Date(),
-		critiques: [],
-        items: createSliders(),
+		critiques: [
+            // createCritique(id),
+        ],
+        practices: createPractices(),
 		...props,
 	};
 }
 
-export const createCritique = (props = {}) => {
+export const createCritique = (strategyId, props = {}) => {
 	const id = makeId();
 	return {
 		id,
-		name: `Critique [${id}]`,
-		description: '[Description goes here]',
-		model: 'V1',
-		lastModified: new Date(),
-		critiques: [],
+        strategyId,
+		name: 'Critique',
+		practice: '',
 		...props,
 	};
 }
-
-
-// export const slidersForDisplay = Object.values(sliders).reduce((acc, cur) => {
-//     const {label, id, value, category} = cur;
-//     if (!acc[category]) {
-//         acc[category] = [];
-//     }
-//     acc[category].push(id);
-//     return acc;
-// }, {});
-
-console.log(slidersForDisplay);
-
-// const sliders = [
-//     {
-//         label: 'Stop-Work Authority',
-//         id: 'stop-work-authority',
-//         value: 0,
-//         category: 'Reframing Work Design'
-//     },
-//     {
-//         label: 'Emotional Ambivalence',
-//         id: 'emotional-ambivalence',
-//         value: 0,
-//         category: 'Reframing Work Design'
-//     },
-//     {
-//         label: 'Managing Reliability Drift',
-//         id: 'managing-reliability-drift',
-//         value: 0,
-//         category: 'Reframing Work Design'
-//     },
-//     {
-//         label: 'Emergency Drills',
-//         id: 'emergency-drills',
-//         value: 0,
-//         category: 'Reframing Work Training'
-//     },
-//     {
-//         label: 'Tabletop Exercises',
-//         id: 'tabletop-exercises',
-//         value: 0,
-//         category: 'Reframing Work Training'
-//     },
-//     {
-//         label: 'Just-In-Time-Learning',
-//         id: 'just-in-time-learning',
-//         value: 0,
-//         category: 'Reframing Work Training'
-//     },
-//     {
-//         label: 'Post-Event Debriefings',
-//         id: 'post-event-debriefings',
-//         value: 0,
-//         category: 'Reframing Work Training'
-//     },
-//     {
-//         label: 'Institutionalizing Prosocial Motivation',
-//         id: 'institutionalizing-prosocial-motivation',
-//         value: 0,
-//         category: 'Reframing Relating Colleagues Peers'
-//     },
-//     {
-//         label: 'Fostering Social Ties and Mutual Respect',
-//         id: 'fostering-social-ties-and-mutual-respect',
-//         value: 0,
-//         category: 'Reframing Relating Colleagues Peers'
-//     },
-//     {
-//         label: 'Practicing Mindfulness',
-//         id: 'practicing-mindfulness',
-//         value: 0,
-//         category: 'Reframing How the Work Should Be Done'
-//     },
-//     {
-//         label: 'Fostering Sense of Accountability',
-//         id: 'fostering-sense-of-accountability',
-//         value: 0,
-//         category: 'Reframing How the Work Should Be Done'
-//     },
-//     {
-//         label: 'Implementing Safety Huddles',
-//         id: 'implementing-safety-huddles',
-//         value: 0,
-//         category: 'Reframing Work Communication'
-//     },
-//     {
-//         label: 'Reporting Near-Misses/Incidents',
-//         id: 'reporting-near-misses-incidents',
-//         value: 0,
-//         category: 'Reframing Work Communication'
-//     },
-// ];
