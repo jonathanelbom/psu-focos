@@ -25,13 +25,19 @@ const TopNav = () => {
         >
             <Typography
                 variant="h6"
-                style={{
+                onClick={() => {
+                    dispatch({
+                        type: 'LOG_STATE'
+                    })
+                }}
+                sx={{
                     color: '#fff',
                     padding: '0px 10px',
-                    borderRadius: '16px',
+                    borderRadius: '8px',
                     margin: '8px 0',
                     background: color.gray_300,
                     background: `linear-gradient(180deg, ${color.grad_dark_light} 0%, ${color.grad_dark_medium} 50%, ${color.grad_dark_dark} 50%, ${color.grad_dark_light} 100%)`,
+                    // order: 1,
                 }}
             >
                 FOCOS
@@ -40,9 +46,11 @@ const TopNav = () => {
                 sx={{
                     display: 'flex',
                     flexGrow: 1,
-                    justifyContent: 'flex-end'
+                    justifyContent: 'flex-end',
+                    // order: 0,
                 }}
             >
+
 
                 <Tabs
                     value={primaryNav}
@@ -54,7 +62,6 @@ const TopNav = () => {
                             label={text}
                             key={text}
                             value={value}
-                            disabled={['explore', 'compare'].includes(value)}
                             {...(primaryNav !== value && {onClick: () => {
                                 dispatch({
                                     type: 'SET_NAV',
@@ -77,9 +84,9 @@ export const Main = () => {
     const { state, dispatch } = useApp();
     const { primaryNav } = state;
     const MainContent = {
-        'explore': () => <div>{'Explore'}</div>,
+        'explore': () => <Box sx={{padding: '16px'}}><Typography><em>{'Explore flow goes here'}</em></Typography></Box>,
         'strategies': Strategies,
-        'compare': () => <div>{'Compare'}</div>,
+        'compare': () => <Box sx={{padding: '16px'}}><Typography><em>{'Compare flow goes here'}</em></Typography></Box>,
     }[primaryNav];
     return (
         <div

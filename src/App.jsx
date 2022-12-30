@@ -118,6 +118,11 @@ const reducer = (state, action) => {
 						: strategy
 				)),
 			};
+		case 'LOG_STATE':
+			console.log(JSON.stringify(state, null, 4))
+			return {
+				...state,
+			};
 		default:
 			return {
 				...state,

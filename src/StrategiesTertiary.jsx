@@ -70,7 +70,7 @@ export const ColumnTertiary = () => {
         <Column
             sx={columnStyle}
             header={(
-                <ColumnHeader sx={{padding: 0}}>
+                <ColumnHeader sx={{padding: 0, borderInlineEnd: 'none'}}>
                     <Tabs
                         value={tertiaryNav}
                         onChange={() => {}}
