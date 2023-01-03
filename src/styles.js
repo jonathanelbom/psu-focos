@@ -48,17 +48,17 @@ export const shadow = {
     medium: '0 0 8px 1px rgba(0, 0, 0, .25)',
 };
 
-const shadow_line = {
+export const shadow_line = {
     below: {
-        background: 'linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%)'
+        background: 'linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 100%)'
     },
     above: {
-        background: 'linear-gradient(0deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%)'
+        background: 'linear-gradient(0deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 100%)'
     }
 } 
 
-const scroll_signifier_height = '8px';
-const scroll_signifier_base = {
+export const scroll_signifier_height = '12px';
+export const scroll_signifier_base = {
     content: '""',
     position: 'absolute',
     zIndex: 1,
@@ -68,40 +68,77 @@ const scroll_signifier_base = {
     transition: 'opacity 150ms ease',
     height: scroll_signifier_height,
 };
-export const scroll_signifier = {
-    below: {
-        position: 'relative',
-        '&:before': {
-            ...scroll_signifier_base,
-            ...shadow_line.below,
-            bottom: `-${scroll_signifier_height}`,
-        }
-    },
-    below_hidden: {
-        position: 'relative',
-        '&:before': {
-            ...scroll_signifier_base,
-            ...shadow_line.below,
-            bottom: `-${scroll_signifier_height}`,
-            opacity: 0,
-        }
-    },
-    above: {
-        position: 'relative',
-        '&:before': {
-            ...scroll_signifier_base,
-            ...shadow_line.above,
-            top: `-${scroll_signifier_height}`,
-        }
-    },
-    above_hidden: {
-        position: 'relative',
-        '&:before': {
-            ...scroll_signifier_base,
-            ...shadow_line.above,
-            top: `-${scroll_signifier_height}`,
-            opacity: 0,
-        }
-    }
 
-};
+// export const scroll_signifier = {
+//     below: {
+//         position: 'relative',
+//         '&:before': {
+//             ...scroll_signifier_base,
+//             ...shadow_line.below,
+//             bottom: `-${scroll_signifier_height}`,
+//         }
+//     },
+//     below_hidden: {
+//         position: 'relative',
+//         '&:before': {
+//             ...scroll_signifier_base,
+//             ...shadow_line.below,
+//             bottom: `-${scroll_signifier_height}`,
+//             opacity: 0,
+//         }
+//     },
+//     above: {
+//         position: 'relative',
+//         '&:before': {
+//             ...scroll_signifier_base,
+//             ...shadow_line.above,
+//             top: `-${scroll_signifier_height}`,
+//         }
+//     },
+//     above_hidden: {
+//         position: 'relative',
+//         '&:before': {
+//             ...scroll_signifier_base,
+//             ...shadow_line.above,
+//             top: `-${scroll_signifier_height}`,
+//             opacity: 0,
+//         }
+//     }
+// };
+
+export const overflow_shadow = {
+	top: {
+        position: 'relative',
+        '&:before': {
+            ...scroll_signifier_base,
+            ...shadow_line.below,
+            top: 0,
+        }
+    },
+    top_hidden: {
+        position: 'relative',
+        '&:before': {
+            ...scroll_signifier_base,
+            ...shadow_line.below,
+            top: 0,
+            opacity: 0,
+        }
+    },
+    bottom: {
+        position: 'relative',
+        '&:after': {
+            ...scroll_signifier_base,
+            ...shadow_line.above,
+            bottom: 0,	
+        }
+    },
+    bottom_hidden: {
+        position: 'relative',
+        '&:after': {
+            ...scroll_signifier_base,
+            ...shadow_line.above,
+            bottom: 0,
+            opacity: 0
+        }
+    },
+}

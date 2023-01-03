@@ -4,7 +4,7 @@ import { Main } from './Main';
 import { createCritique, createStategy, getSelected, makeId } from './utils';
 
 
-const strategies = []; // new Array(2).fill('').map(() => createStategy());
+const strategies = new Array(1).fill('').map(() => createStategy());
 const initialState = {
 	primaryNav: 'strategies',
 	secondaryNav: 'strategy', // 'critiques', // 'strategy',
@@ -12,13 +12,19 @@ const initialState = {
 	strategies,
 	selectedStrategy: strategies[0]?.id || '',
 	selectedCritique: strategies[0]?.critiques[0]?.id || '',
+	dialogData: {
+		// isOpen: false,
+		// title: '',
+		// body: '',
+		// actions: [],
+	},
 };
 
 export const AppContext = createContext();
 
 const reducer = (state, action) => {
 	const { type, value } = action;
-	// console.log(type,'\nvalue:', value, '\n\n');
+	console.log(type,'\nvalue:', value, '\n\n');
 	switch (type) {
 		case 'SET_NAV':
 			return {
@@ -45,7 +51,8 @@ const reducer = (state, action) => {
 				))
 			};
 		case 'ADD_STRATEGY':
-			const strategy = createStategy();
+			console.log('value:', value);
+			const strategy = createStategy(value || {});
 			return {
 				...state,
 				selectedStrategy: strategy.id,
@@ -75,7 +82,7 @@ const reducer = (state, action) => {
 		case 'REMOVE_STRATEGY':
 			const strategies = state.strategies.filter((strategy) => strategy.id !== value);
 			// console.log('REMOVE_STRATEGY, value:', value, ', strategies:', strategies);
-			console.log(getSelected(strategies));
+			// console.log(getSelected(strategies));
 			return {
 				...state,
 				strategies,
@@ -122,6 +129,11 @@ const reducer = (state, action) => {
 			console.log(JSON.stringify(state, null, 4))
 			return {
 				...state,
+			};
+		case 'SET_DIALOG_DATA':
+			return {
+				...state,
+				dialogData: value,
 			};
 		default:
 			return {

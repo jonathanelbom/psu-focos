@@ -1,3 +1,4 @@
+export const debug = false; // window.document.location.href.includes('localhost') || window.document.location.href.includes('?debug');
 export const practices = {
     'stop-work-authority': {
         label: 'Stop-Work Authority',
@@ -160,7 +161,7 @@ export const getSelected = (strategies) => {
 }
 
 export const createStategy = (props = {}) => {
-	const id = makeId();
+    const id = makeId();
 	return {
 		id,
 		name: 'Strategy',
@@ -168,7 +169,7 @@ export const createStategy = (props = {}) => {
 		model: 'V00.01',
 		lastModified: new Date(),
 		critiques: [
-            // createCritique(id),
+            createCritique(id),
         ],
         practices: createPractices(),
 		...props,

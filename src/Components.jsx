@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, Typography, Grid, Slider, Input } from '@mui/material';
 import { useApp } from './App';
-import { color, scroll_signifier } from './styles';
+import { color, overflow_shadow, scroll_signifier, scroll_signifier_base, scroll_signifier_height, shadow_line } from './styles';
 
 export const InputSlider = ({label = "Slider label", value = 0, callback}) => {
 	const [tempValue, setTempValue] = React.useState(value);
@@ -77,19 +77,6 @@ export const InputSlider = ({label = "Slider label", value = 0, callback}) => {
 	);
 }
 
-// export const TextArea = ({ value, callback, sx }) => {
-// 	const [tempValue, setSetValue] = useState('');
-
-// 	return (
-// 		<Box
-// 			contentEditable
-// 			onBlur={() => { }}
-// 		>
-
-// 		</Box>
-// 	)
-// }
-
 export const ColumnHeader = ({ children, sx }) => {
 	return (
 		<Box
@@ -139,6 +126,8 @@ export const ColumnFooter = ({ children, sx }) => {
 	);
 }
 
+
+
 export const Column = ({ header, children, footer, sx }) => {
 	// const gridTemplateRows = `${header ? 'min-content ' : ''}1fr${footer ? ' min-content' : ''}`;
 	const { state, dispatch } = useApp();
@@ -147,6 +136,7 @@ export const Column = ({ header, children, footer, sx }) => {
 	const ref = useRef(null);
 	const refTop = useRef(null);
 	const refBottom = useRef(null);
+	
 	const callback = (entries, observer) => {
 		entries.forEach(entry => {
 			// console.log(entry);
@@ -179,17 +169,41 @@ export const Column = ({ header, children, footer, sx }) => {
 			}}
 		>
 			{header && (
-				<Box sx={{ ...(topIntersecting ? scroll_signifier.below_hidden : scroll_signifier.below) }}>
+				// <Box sx={{ ...(topIntersecting ? scroll_signifier.below_hidden : scroll_signifier.below) }}>
+				<Box>
 					{header}
 				</Box>
 			)}
-			<Box ref={ref} sx={{ overflow: 'auto', padding: '16px', flexGrow: 1 }}>
-				<Box ref={refTop} />
-				{children}
-				<Box ref={refBottom} />
+			<Box ref={ref}
+				sx={{
+					overflow: 'hidden',
+					flexGrow: 1,
+					position: 'relative',
+					...(topIntersecting ? overflow_shadow.top_hidden : overflow_shadow.top),
+					...(bottomIntersecting ? overflow_shadow.bottom_hidden : overflow_shadow.bottom),
+				}}
+			>
+				<Box
+					sx={{
+						overflow: 'auto',
+						padding: '0 16px',
+						position: 'absolute',
+						top: 0,
+						left: 0,
+						right: 0,
+						bottom: 0
+					}}
+				>
+					<Box ref={refTop}/>
+						<Box sx={{padding: '16px 0'}}>
+							{children}
+						</Box>
+					<Box ref={refBottom}/>
+				</Box>
 			</Box>
 			{footer && (
-				<Box sx={{ ...(bottomIntersecting ? scroll_signifier.above_hidden : scroll_signifier.above) }}>
+				// <Box sx={{ ...(bottomIntersecting ? scroll_signifier.above_hidden : scroll_signifier.above) }}>
+				<Box>
 					{footer}
 				</Box>
 			)}

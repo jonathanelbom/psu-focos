@@ -4,14 +4,14 @@ import { AddCircle, Delete } from '@mui/icons-material';
 import { useApp } from './App';
 import { Column, ColumnHeader, ColumnFooter, InputSlider } from './Components';
 import { button, card, color } from './styles';
-import { practicesForCritique, practicesForDisplay } from './utils';
+import { debug, practicesForCritique, practicesForDisplay } from './utils';
 
 const Critique = ({data}) => {
     const {id, name, practice} = data;
     const { state, dispatch } = useApp();
     const {strategies, selectedStrategy, selectedCritique} = state;
     const strategy = strategies.find(({id}) => id === selectedStrategy);
-    // console.log('data:', data);
+    const fontStyle = {fontSize: '14px'}
     return (
         <Card
             tabIndex={0}    
@@ -45,7 +45,7 @@ const Critique = ({data}) => {
                         wordBreak: 'break-all'
                     }}
                 >
-                     {name}<em>{` ${id}`}</em>
+                     {name}<em>{debug ? ` ${id}` : ''}</em>
                 </Typography>
                 <IconButton
                     sx={{transform: 'translate(6px, -6px)'}}
@@ -54,8 +54,19 @@ const Critique = ({data}) => {
                     onClick={(e) => {
                         e.stopPropagation();
                         dispatch({
-                            type: 'REMOVE_CRITIQUE',
-                            value: id
+                            type: 'SET_DIALOG_DATA',
+                            value: {
+                                isOpen: true,
+                                title: 'Delete Critique',
+                                body: `Are you sure you want to delete ${name}. This action cannout be undone.`,
+                                actions: [{
+                                    label: 'Delete',
+                                    action: {
+                                        type: 'REMOVE_CRITIQUE',
+                                        value: id
+                                    }
+                                }]
+                            }
                         })
                     }}
                 >
@@ -89,13 +100,12 @@ const Critique = ({data}) => {
                                 }
                             })
                         }}
-                        sx={{ backgroundColor: '#fff'}}
+                        sx={{ backgroundColor: '#fff', ...fontStyle}}
                     >
-                        <MenuItem value="">
-                            <em>None selected</em>
+                        <MenuItem value="" sx={fontStyle}><em>Select a practice</em>
                         </MenuItem>
                         {practicesForCritique.map(({id, label}) => (
-                            <MenuItem key={id} value={id}>{label}</MenuItem>
+                            <MenuItem key={id} value={id} sx={fontStyle}>{label}</MenuItem>
                         ))}
                     </Select>
                 </FormControl>

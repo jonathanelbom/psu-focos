@@ -16,13 +16,11 @@ const CritiquePanel = () => {
     const {practice} = critique || {};
 
     if (!practice) {
-        return (
-            <Typography><em>{'Select a Practice to critique from the dropdown in the highlighted Critique on the left'}</em></Typography>
-        );
+        
     }
 
     return (
-        <Typography><em>{`Crtitque ${tertiaryNav === 'output' ? 'output display' : 'model editor'} goes here`}</em></Typography>
+        <Typography><em>{`Critique ${tertiaryNav === 'output' ? 'output display' : 'model editor'} goes here`}</em></Typography>
     )
 }
 
@@ -63,6 +61,14 @@ export const ColumnTertiary = () => {
     if (!selectedStrategy || (secondaryNav === 'critiques' && !selectedCritique)) {
         return (
             <Column sx={columnStyle}/>
+        );
+    }
+
+    if (secondaryNav === 'critiques' && critique && !critique?.practice) {
+        return (
+            <Column sx={columnStyle}>
+                <Typography><em>{'Select a Practice to critique from the dropdown in the highlighted Critique on the left'}</em></Typography>
+            </Column>
         );
     }
 

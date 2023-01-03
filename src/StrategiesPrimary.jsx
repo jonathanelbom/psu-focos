@@ -4,6 +4,7 @@ import { AddCircle, Delete, Edit } from '@mui/icons-material';
 import { useApp } from './App';
 import { Column, ColumnHeader, ColumnFooter } from './Components';
 import { button, card, color } from './styles';
+import { debug } from './utils';
 
 const Strategy = ({data}) => {
     const {state, dispatch} = useApp();
@@ -42,7 +43,7 @@ const Strategy = ({data}) => {
                         wordBreak: 'break-all'
                     }}
                 >
-                    {name}<em>{` ${id}`}</em>
+                    {name}<em>{debug ? ` ${id}` : ''}</em>
                 </Typography>
                 <IconButton
                     sx={{transform: 'translate(6px, -6px)'}}
@@ -51,9 +52,20 @@ const Strategy = ({data}) => {
                     onClick={(e) => {
                         e.stopPropagation();
                         dispatch({
-                            type: 'REMOVE_STRATEGY',
-                            value: data.id
-                        })
+                            type: 'SET_DIALOG_DATA',
+                            value: {
+                                isOpen: true,
+                                title: 'Delete Stragetgy',
+                                body: `Are you sure you want to delete ${name}. This action cannout be undone and all Critiques in this strategy will also be deleted.`,
+                                actions: [{
+                                    label: 'Delete',
+                                    action: {
+                                        type: 'REMOVE_STRATEGY',
+                                        value: id
+                                    }
+                                }]
+                            }
+                        });
                     }}
                 >
                     <Delete />
@@ -102,9 +114,24 @@ export const ColumnPrimary = () => {
                         startIcon={<AddCircle />}
                         sx={button.footer}
                         onClick={() => {
+                            // dispatch({
+                            //     type: 'ADD_STRATEGY'
+                            // })
                             dispatch({
-                                type: 'ADD_STRATEGY'
-                            })
+                                type: 'SET_DIALOG_DATA',
+                                value: {
+                                    isOpen: true,
+                                    title: 'Add Stragetgy',
+                                    // body: `Are you sure you want to delete ${name}. This action cannout be undone and all Critiques in this strategy will also be deleted.`,
+                                    componentName: 'addStrategy',
+                                    actions: [{
+                                        label: 'Add Strategy',
+                                        action: {
+                                            type: 'ADD_STRATEGY',
+                                        }
+                                    }]
+                                }
+                            });
                         }}
                     >
                         Add Strategy
