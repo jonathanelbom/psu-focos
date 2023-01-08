@@ -173,7 +173,8 @@ export const ColumnFooter = ({ children, sx }) => {
 
 export const Column = ({ header, children, footer, sx, outerSx, onToggleExpanded, isExpanded, index }) => {
 	const { state, dispatch } = useApp();
-	const {expanded, collapsable} = state.expandedData.columns[index];
+	const {columns} = state.expandedData;
+	const {expanded, collapsable} = columns[index];
 	const [topIntersecting, setTopIntersecting] = useState(false);
 	const [bottomIntersecting, setBottomIntersecting] = useState(false);
 	const ref = useRef(null);
@@ -217,7 +218,7 @@ export const Column = ({ header, children, footer, sx, outerSx, onToggleExpanded
 					overflowY: 'auto',
 					display: 'flex',
 					flexDirection: 'column',
-					borderInlineEnd: `1px solid ${color.border_layout}`,
+					...(index < columns.length - 1 && {borderInlineEnd: `1px solid ${color.border_layout}`}),
 					...(sx && sx)
 				}}
 			>
