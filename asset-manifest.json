@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/psu-focos/static/css/main.e939ccfd.css",
-    "main.js": "/psu-focos/static/js/main.ed2cf4c9.js",
+    "main.js": "/psu-focos/static/js/main.a8ec4338.js",
     "static/js/787.171bcbcf.chunk.js": "/psu-focos/static/js/787.171bcbcf.chunk.js",
     "index.html": "/psu-focos/index.html",
     "main.e939ccfd.css.map": "/psu-focos/static/css/main.e939ccfd.css.map",
-    "main.ed2cf4c9.js.map": "/psu-focos/static/js/main.ed2cf4c9.js.map",
+    "main.a8ec4338.js.map": "/psu-focos/static/js/main.a8ec4338.js.map",
     "787.171bcbcf.chunk.js.map": "/psu-focos/static/js/787.171bcbcf.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e939ccfd.css",
-    "static/js/main.ed2cf4c9.js"
+    "static/js/main.a8ec4338.js"
   ]
 }
