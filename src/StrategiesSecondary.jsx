@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Card, IconButton, Typography, Tabs, Tab, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import { AddCircle, Delete } from '@mui/icons-material';
+import { AddCircle, Delete, StickyNote2 } from '@mui/icons-material';
 import { useApp } from './App';
 import { Column, ColumnHeader, ColumnFooter, InputSlider } from './Components';
 import { button, card, color } from './styles';
@@ -158,53 +158,65 @@ const StrategyValues = () => {
             {practicesForDisplay.map((group) => (
                 <Box
                     key={group.category}
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        rowGap: '8px'
-                    }}
                 >
                     <Typography
                         sx={{
                             textTransform: 'uppercase',
 				            fontSize: '14px',
                             fontWeight: 500,
+                            position: 'sticky',
+                            top: 0,
+                            backgroundColor: color.column_secondary,
+                            zIndex: 1,
+                            padding: '8px 4px',
+                            marginLeft: '-4px',
+                            marginRight: '-4px',
+                            borderBottom: `1px solid ${color.border_layout}`
                         }}
                     >
                         {group.category}
                     </Typography>
-                    {group.practices.map((id) => {
-                        const {label, value} = practices[id];
-                        return (
-                            <InputSlider
-                                key={`${selectedStrategy}-${id}`}
-                                label={label}
-                                value={value}
-                                callback={(newValue) => {
-                                    dispatch({
-                                        type: 'UPDATE_STRATEGY',
-                                        value: {
-                                            ...strategy,
-                                            practices: {
-                                                ...practices,
-                                                [id]: {
-                                                    ...practices[id],
-                                                    value: newValue
-                                                }
-                                            },
-                                        }
-                                    })
-                                }}
-                            />
-                        );
-                    })}
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            rowGap: '8px',
+                            marginTop: '8px'
+                        }}
+                    >
+                        {group.practices.map((id) => {
+                            const {label, value} = practices[id];
+                            return (
+                                <InputSlider
+                                    key={`${selectedStrategy}-${id}`}
+                                    label={label}
+                                    value={value}
+                                    callback={(newValue) => {
+                                        dispatch({
+                                            type: 'UPDATE_STRATEGY',
+                                            value: {
+                                                ...strategy,
+                                                practices: {
+                                                    ...practices,
+                                                    [id]: {
+                                                        ...practices[id],
+                                                        value: newValue
+                                                    }
+                                                },
+                                            }
+                                        })
+                                    }}
+                                />
+                            );
+                        })}
+                    </Box>
                 </Box>
             ))}
         </Box>
     )
 }
 
-export const ColumnSecondary = () => {
+export const ColumnSecondary = ({outerSx, onToggleExpanded, index}) => {
     const { state, dispatch } = useApp();
     const {strategies, secondaryNav, selectedStrategy, selectedCritique} = state;
     const hasStrategies = strategies && strategies.length > 0;
@@ -230,13 +242,13 @@ export const ColumnSecondary = () => {
     const columnStyle = {backgroundColor: color.column_secondary};
     if (!hasStrategies) {
         return (
-            <Column sx={columnStyle}/>
+            <Column sx={columnStyle} index={index}/>
         );
     }
 
     if (hasStrategies && !selectedStrategy) {
         return (
-            <Column sx={columnStyle}>
+            <Column sx={columnStyle} index={index}>
                 <Typography><em>{'Click on a Strategy on the left to select it.'}</em></Typography>
             </Column>
         );
@@ -244,7 +256,10 @@ export const ColumnSecondary = () => {
   
     return (
         <Column 
-            sx={columnStyle}
+            sx={{...columnStyle}}
+            {...(outerSx && {outerSx})}
+            {...(onToggleExpanded && {onToggleExpanded})}
+            index={index}
             header={(
                 <ColumnHeader
                     sx={{

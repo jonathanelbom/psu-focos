@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useReducer } from 'react';
 import './App.scss';
 import { Main } from './Main';
-import { createCritique, createStategy, getSelected, makeId } from './utils';
+import { computeExpandedWidth, createCritique, createStategy, getSelected, makeId } from './utils';
 
 
 const strategies = new Array(1).fill('').map(() => createStategy());
@@ -12,19 +12,23 @@ const initialState = {
 	strategies,
 	selectedStrategy: strategies[0]?.id || '',
 	selectedCritique: strategies[0]?.critiques[0]?.id || '',
-	dialogData: {
-		// isOpen: false,
-		// title: '',
-		// body: '',
-		// actions: [],
-	},
+	dialogData: {},
+	expandedData: computeExpandedWidth({
+		collapsedWidth: 58,
+		size: 4,
+		columns: [
+			{size: 1, expanded: true, collapsable: true, width: `${1/4 * 100}%`},
+			{size: 1, expanded: true, collapsable: true, width: `${1/4 * 100}%`},
+			{size: 2, expanded: true, collapsable: false, width: `${2/4 * 100}%`}
+		]
+	})
 };
 
 export const AppContext = createContext();
 
 const reducer = (state, action) => {
 	const { type, value } = action;
-	console.log(type,'\nvalue:', value, '\n\n');
+	// console.log(type,'\nvalue:', value, '\n\n');
 	switch (type) {
 		case 'SET_NAV':
 			return {
@@ -134,6 +138,11 @@ const reducer = (state, action) => {
 			return {
 				...state,
 				dialogData: value,
+			};
+		case 'TOGGLE_EXPANDED':
+			return {
+				...state,
+				expandedData: computeExpandedWidth(state.expandedData, value),
 			};
 		default:
 			return {

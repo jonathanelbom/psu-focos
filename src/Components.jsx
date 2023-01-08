@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Box, Typography, Grid, Slider, Input } from '@mui/material';
+import React, { cloneElement, useEffect, useRef, useState } from 'react';
+import { Box, Typography, Grid, Slider, Input, IconButton } from '@mui/material';
 import { useApp } from './App';
 import { color, overflow_shadow, scroll_signifier, scroll_signifier_base, scroll_signifier_height, shadow_line } from './styles';
+import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 
 export const InputSlider = ({label = "Slider label", value = 0, callback}) => {
 	const [tempValue, setTempValue] = React.useState(value);
@@ -52,7 +53,7 @@ export const InputSlider = ({label = "Slider label", value = 0, callback}) => {
 			<Grid container spacing={2} alignItems="center">
 				<Grid item xs>
 					<Slider
-						value={valueToUse} // typeof value === 'number' ? value : 0}
+						value={valueToUse}
 						onChange={handleSliderChange}
 						aria-labelledby="input-slider"
 					/>
@@ -77,22 +78,27 @@ export const InputSlider = ({label = "Slider label", value = 0, callback}) => {
 	);
 }
 
-export const ColumnHeader = ({ children, sx }) => {
-	return (
+export const ColumnHeader = ({ children, sx, index}) => {
+	const {state, dispatch} = useApp();
+	const {expanded, collapsable} = state.expandedData.columns[index];
+	const ref = useRef();
+	const border = {borderBlockEnd: `solid 1px ${color.border_layout}`}
+	const content = (
 		<Box
 			sx={{
-				backgroundColor: color.bg_light,
+				...(!collapsable &&  {
+					backgroundColor: color.bg_light,
+					...border
+				}),
 				padding: "8px 16px",
 				position: 'relative',
 				zIndex: 1,
-				borderBlockEnd: `solid 1px ${color.border_layout}`,
 				height: '48px',
 				display: 'flex',
 				alignItems: 'center',
-				justifyContent: 'center',
+				justifyContent: 'flex-start',
 				textTransform: 'uppercase',
 				fontSize: '14px',
-				borderInlineEnd: `1px solid ${color.border_layout}`,
 				...(sx && sx)
 
 			}}
@@ -103,6 +109,44 @@ export const ColumnHeader = ({ children, sx }) => {
 			{typeof children !== 'string' && children}
 		</Box>
 	);
+	if (collapsable) {
+		return (
+			<Box
+				ref={ref}
+				sx={{
+					...(collapsable &&  {
+						backgroundColor: color.bg_light,
+						...border,
+						padding: '0 8px'
+					}),
+					position: 'relative',
+					display: 'flex',
+					justifyContent: 'space-between',
+					alignItems: 'center',
+					overflow: 'auto'
+				}}
+			>
+				{expanded && (
+					<Box>{content}</Box>
+				)}
+				<Box sx={{padding: '4px 0', width: '100%', display: 'flex', justifyContent: 'flex-end'}}>
+					<IconButton
+						variant=""
+						aria-label="delete"
+						onClick={() => {
+							dispatch({
+								type: 'TOGGLE_EXPANDED',
+								value: index,
+							})
+						}}
+					>
+						{expanded ? <ChevronLeft /> : <ChevronRight />}
+					</IconButton>
+				</Box>
+			</Box>
+		)
+	}
+	return content;
 }
 
 export const ColumnFooter = ({ children, sx }) => {
@@ -116,7 +160,6 @@ export const ColumnFooter = ({ children, sx }) => {
 				zIndex: 1,
 				display: 'flex',
 				justifyContent: 'center',
-				borderInlineEnd: `1px solid ${color.border_layout}`,
 				...(sx && sx),
 
 			}}
@@ -128,15 +171,14 @@ export const ColumnFooter = ({ children, sx }) => {
 
 
 
-export const Column = ({ header, children, footer, sx }) => {
-	// const gridTemplateRows = `${header ? 'min-content ' : ''}1fr${footer ? ' min-content' : ''}`;
+export const Column = ({ header, children, footer, sx, outerSx, onToggleExpanded, isExpanded, index }) => {
 	const { state, dispatch } = useApp();
+	const {expanded, collapsable} = state.expandedData.columns[index];
 	const [topIntersecting, setTopIntersecting] = useState(false);
 	const [bottomIntersecting, setBottomIntersecting] = useState(false);
 	const ref = useRef(null);
 	const refTop = useRef(null);
 	const refBottom = useRef(null);
-	
 	const callback = (entries, observer) => {
 		entries.forEach(entry => {
 			// console.log(entry);
@@ -156,57 +198,76 @@ export const Column = ({ header, children, footer, sx }) => {
 			observerBottom.disconnect();
 		}
 	}, []);
+	const hiddenStyle = {
+		visibility: 'hidden',
+		pointerEvents: 'none'
+	};
 	return (
 		<Box
 			sx={{
-				height: '100%',
-				overflow: 'auto',
-				display: 'flex',
-				flexDirection: 'column',
-				// display: 'grid',
-				// gridTemplateRows: `${header ? 'min-content ' : ''}1fr${footer ? ' min-content' : ''}`,
-				...(sx && sx)
+				position: 'relative',
+				overflow: 'hidden',
+				...(outerSx && outerSx)
 			}}
 		>
-			{header && (
-				// <Box sx={{ ...(topIntersecting ? scroll_signifier.below_hidden : scroll_signifier.below) }}>
-				<Box>
-					{header}
-				</Box>
-			)}
-			<Box ref={ref}
+			<Box
 				sx={{
-					overflow: 'hidden',
-					flexGrow: 1,
-					position: 'relative',
-					...(topIntersecting ? overflow_shadow.top_hidden : overflow_shadow.top),
-					...(bottomIntersecting ? overflow_shadow.bottom_hidden : overflow_shadow.bottom),
+					height: '100%',
+					overflowX: 'hidden',
+					overflowY: 'auto',
+					display: 'flex',
+					flexDirection: 'column',
+					borderInlineEnd: `1px solid ${color.border_layout}`,
+					...(sx && sx)
 				}}
 			>
-				<Box
+				
+				{header && (
+					<Box>
+						{header ? (
+							cloneElement(header, {index, index})
+						) : null
+						}
+					</Box>
+				)}
+				<Box ref={ref}
 					sx={{
-						overflow: 'auto',
-						padding: '0 16px',
-						position: 'absolute',
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0
+						overflow: 'hidden',
+						flexGrow: 1,
+						position: 'relative',
+						...(topIntersecting ? overflow_shadow.top_hidden : overflow_shadow.top),
+						...(bottomIntersecting ? overflow_shadow.bottom_hidden : overflow_shadow.bottom),
+						...(!expanded && hiddenStyle)
 					}}
 				>
-					<Box ref={refTop}/>
-						<Box sx={{padding: '16px 0'}}>
-							{children}
-						</Box>
-					<Box ref={refBottom}/>
+					<Box
+						sx={{
+							overflow: 'auto',
+							padding: '0 16px',
+							position: 'absolute',
+							top: 0,
+							left: 0,
+							right: 0,
+							bottom: 0,
+						}}
+					>
+						<Box ref={refTop}/>
+							<Box sx={{padding: '16px 0'}}>
+								{children}
+							</Box>
+						<Box ref={refBottom}/>
+					</Box>
 				</Box>
+				{footer && (
+					<Box
+						sx={{
+							...(!expanded && hiddenStyle)
+						}}
+					>
+						{footer}
+					</Box>
+				)}
 			</Box>
-			{footer && (
-				// <Box sx={{ ...(bottomIntersecting ? scroll_signifier.above_hidden : scroll_signifier.above) }}>
-				<Box>
-					{footer}
-				</Box>
-			)}
 		</Box>
 	)
 }

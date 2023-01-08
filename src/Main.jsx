@@ -32,10 +32,11 @@ const TopNav = () => {
                 sx={{
                     color: '#fff',
                     padding: '0px 10px',
+                    margin: '8px',
                     display: 'flex',
                     alignItems: 'center',
-                    background: color.gray_300,
-                    background: `linear-gradient(180deg, ${color.grad_dark_light} 0%, ${color.grad_dark_medium} 50%, ${color.grad_dark_dark} 50%, ${color.grad_dark_light} 100%)`,
+                    background: color.gray_500,
+                    // background: `linear-gradient(180deg, ${color.grad_dark_light} 0%, ${color.grad_dark_medium} 50%, ${color.grad_dark_dark} 50%, ${color.grad_dark_light} 100%)`,
                 }}
             >
                 FOCOS

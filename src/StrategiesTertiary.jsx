@@ -35,7 +35,7 @@ const StrategyPanel = () => {
     )
 }
 
-export const ColumnTertiary = () => {
+export const ColumnTertiary = ({outerSx, onToggleExpanded, index}) => {
     const { state, dispatch } = useApp();
     const {strategies, secondaryNav, tertiaryNav, selectedStrategy, selectedCritique} = state;
     const hasStrategies = strategies && strategies.length > 0;
@@ -60,13 +60,13 @@ export const ColumnTertiary = () => {
     
     if (!selectedStrategy || (secondaryNav === 'critiques' && !selectedCritique)) {
         return (
-            <Column sx={columnStyle}/>
+            <Column sx={columnStyle} index={index}/>
         );
     }
 
     if (secondaryNav === 'critiques' && critique && !critique?.practice) {
         return (
-            <Column sx={columnStyle}>
+            <Column sx={columnStyle} index={index}>
                 <Typography><em>{'Select a Practice to critique from the dropdown in the highlighted Critique on the left'}</em></Typography>
             </Column>
         );
@@ -74,7 +74,10 @@ export const ColumnTertiary = () => {
 
     return (
         <Column
-            sx={columnStyle}
+            sx={{...columnStyle}}
+            {...(outerSx && {outerSx})}
+            {...(onToggleExpanded && {onToggleExpanded})}
+            index={index}
             header={(
                 <ColumnHeader sx={{padding: 0, borderInlineEnd: 'none'}}>
                     <Tabs

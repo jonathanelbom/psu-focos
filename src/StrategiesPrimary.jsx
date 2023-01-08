@@ -68,7 +68,7 @@ const Strategy = ({data}) => {
                         });
                     }}
                 >
-                    <Delete />
+                    <Delete fontSize="small"/>
                 </IconButton>
             </Box>
             <Box
@@ -98,15 +98,18 @@ const Strategy = ({data}) => {
     );
 }
 
-export const ColumnPrimary = () => {
+export const ColumnPrimary = ({outerSx, onToggleExpanded, index}) => {
     const { state, dispatch } = useApp();
     const {strategies} = state;
     const hasStrategies = strategies && strategies.length > 0;
 
     return (
         <Column
-            sx={{ backgroundColor: color.column_primary }}
+            sx={{ backgroundColor: color.column_primary}}
+            {...(outerSx && {outerSx})}
+            {...(onToggleExpanded && {onToggleExpanded})}
             header={<ColumnHeader>Strategies</ColumnHeader>}
+            index={index}
             footer={
                 <ColumnFooter>
                     <Button

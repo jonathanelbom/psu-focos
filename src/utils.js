@@ -186,3 +186,30 @@ export const createCritique = (strategyId, props = {}) => {
 		...props,
 	};
 }
+
+export const computeExpandedWidth = (expandedData, toggleIndex) => {
+	const {columns, size, collapsedWidth} = expandedData;
+    let _columns = [...columns];
+    if (typeof toggleIndex === 'number') {
+        _columns = columns.map((c, index) => (
+            index === toggleIndex
+                ?  {
+                    ...c,
+                    expanded: !c.expanded
+                }
+                : c
+        ));
+    }
+    const numCollapsed = _columns.reduce((acc, cur) => acc + (!cur.expanded ? 1 : 0), 0);
+    _columns = _columns.map((c, index) => ({
+        ...c,
+        width: c.expanded
+            ? `calc(${c.size/(size - numCollapsed) * 100}% - ${(numCollapsed * collapsedWidth)/(_columns.length - numCollapsed)}px)`
+            : `${collapsedWidth}px`
+    }));
+	return {
+		size,
+        collapsedWidth,
+        columns: _columns,
+	};
+}

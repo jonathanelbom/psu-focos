@@ -50,10 +50,10 @@ export const shadow = {
 
 export const shadow_line = {
     below: {
-        background: 'linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 100%)'
+        background: 'linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 20%, rgba(0,0,0,0) 100%)'
     },
     above: {
-        background: 'linear-gradient(0deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 100%)'
+        background: 'linear-gradient(0deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 20%, rgba(0,0,0,0) 100%)'
     }
 } 
 
@@ -61,7 +61,7 @@ export const scroll_signifier_height = '12px';
 export const scroll_signifier_base = {
     content: '""',
     position: 'absolute',
-    zIndex: 1,
+    zIndex: 2,
     left: 0,
     right: 0,
     opacity: 1,
