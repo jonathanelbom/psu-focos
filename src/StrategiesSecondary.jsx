@@ -3,15 +3,15 @@ import { Box, Card, IconButton, Typography, Tabs, Tab, Button, Select, MenuItem,
 import { AddCircle, Delete, StickyNote2 } from '@mui/icons-material';
 import { useApp } from './App';
 import { Column, ColumnHeader, ColumnFooter, InputSlider } from './Components';
-import { button, card, color } from './styles';
+import { button, card, color, columnBoxShadow } from './styles';
 import { debug, practicesForCritique, practicesForDisplay } from './utils';
 
 const Critique = ({data}) => {
     const {id, name, practice} = data;
     const { state, dispatch } = useApp();
-    const {strategies, selectedStrategy, selectedCritique} = state;
-    const strategy = strategies.find(({id}) => id === selectedStrategy);
+    const {selectedCritique} = state;
     const fontStyle = {fontSize: '14px'}
+    
     return (
         <Card
             tabIndex={0}    
@@ -221,7 +221,6 @@ export const ColumnSecondary = ({outerSx, onToggleExpanded, index}) => {
     const {strategies, secondaryNav, selectedStrategy, selectedCritique} = state;
     const hasStrategies = strategies && strategies.length > 0;
     const strategy = hasStrategies && strategies.find(({id}) => id === selectedStrategy);
-    const {critiques} = strategy || {};
     const tabs = [
         {text: 'Practices', value: 'strategy'},
         {text: 'Critiques', value: 'critiques'}
@@ -239,7 +238,7 @@ export const ColumnSecondary = ({outerSx, onToggleExpanded, index}) => {
             }
         })
     };
-    const columnStyle = {backgroundColor: color.column_secondary};
+    const columnStyle = {backgroundColor: color.column_secondary, ...columnBoxShadow, zIndex: 2};
     if (!hasStrategies) {
         return (
             <Column sx={columnStyle} index={index}/>

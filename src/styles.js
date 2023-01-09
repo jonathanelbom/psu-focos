@@ -44,9 +44,13 @@ export const color = {
     ..._color,
 }
 
-export const shadow = {
-    medium: '0 0 8px 1px rgba(0, 0, 0, .25)',
+export const columnBoxShadow = {
+    boxShadow: '0 1px 12px rgba(0, 0, 0, .2)',
 };
+
+// export const shadow = {
+//     medium: '0 0 8px 1px rgba(0, 0, 0, .25)',
+// };
 
 export const shadow_line = {
     below: {
@@ -68,43 +72,6 @@ export const scroll_signifier_base = {
     transition: 'opacity 150ms ease',
     height: scroll_signifier_height,
 };
-
-// export const scroll_signifier = {
-//     below: {
-//         position: 'relative',
-//         '&:before': {
-//             ...scroll_signifier_base,
-//             ...shadow_line.below,
-//             bottom: `-${scroll_signifier_height}`,
-//         }
-//     },
-//     below_hidden: {
-//         position: 'relative',
-//         '&:before': {
-//             ...scroll_signifier_base,
-//             ...shadow_line.below,
-//             bottom: `-${scroll_signifier_height}`,
-//             opacity: 0,
-//         }
-//     },
-//     above: {
-//         position: 'relative',
-//         '&:before': {
-//             ...scroll_signifier_base,
-//             ...shadow_line.above,
-//             top: `-${scroll_signifier_height}`,
-//         }
-//     },
-//     above_hidden: {
-//         position: 'relative',
-//         '&:before': {
-//             ...scroll_signifier_base,
-//             ...shadow_line.above,
-//             top: `-${scroll_signifier_height}`,
-//             opacity: 0,
-//         }
-//     }
-// };
 
 export const overflow_shadow = {
 	top: {

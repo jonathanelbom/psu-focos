@@ -3,7 +3,7 @@ import { Box, Card, IconButton, Typography, Button} from '@mui/material';
 import { AddCircle, Delete, Edit } from '@mui/icons-material';
 import { useApp } from './App';
 import { Column, ColumnHeader, ColumnFooter } from './Components';
-import { button, card, color } from './styles';
+import { button, card, color, columnBoxShadow } from './styles';
 import { debug } from './utils';
 
 const Strategy = ({data}) => {
@@ -98,16 +98,15 @@ const Strategy = ({data}) => {
     );
 }
 
-export const ColumnPrimary = ({outerSx, onToggleExpanded, index}) => {
+export const ColumnPrimary = ({outerSx, index}) => {
     const { state, dispatch } = useApp();
     const {strategies} = state;
     const hasStrategies = strategies && strategies.length > 0;
 
     return (
         <Column
-            sx={{ backgroundColor: color.column_primary}}
+            sx={{ backgroundColor: color.column_primary, ...columnBoxShadow, zIndex: 3}}
             {...(outerSx && {outerSx})}
-            {...(onToggleExpanded && {onToggleExpanded})}
             header={<ColumnHeader>Strategies</ColumnHeader>}
             index={index}
             footer={

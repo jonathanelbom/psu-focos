@@ -174,7 +174,7 @@ export const ColumnFooter = ({ children, sx }) => {
 export const Column = ({ header, children, footer, sx, outerSx, onToggleExpanded, isExpanded, index }) => {
 	const { state, dispatch } = useApp();
 	const {columns} = state.expandedData;
-	const {expanded, collapsable} = columns[index];
+	const {expanded, width} = columns[index];
 	const [topIntersecting, setTopIntersecting] = useState(false);
 	const [bottomIntersecting, setBottomIntersecting] = useState(false);
 	const ref = useRef(null);
@@ -206,69 +206,62 @@ export const Column = ({ header, children, footer, sx, outerSx, onToggleExpanded
 	return (
 		<Box
 			sx={{
-				position: 'relative',
-				overflow: 'hidden',
-				...(outerSx && outerSx)
+				height: '100%',
+				overflowX: 'hidden',
+				overflowY: 'auto',
+				display: 'flex',
+				flexDirection: 'column',
+				width,
+				...(index < columns.length - 1 && {borderInlineEnd: `1px solid ${color.border_layout}`}),
+				...(sx && sx)
 			}}
 		>
-			<Box
+			
+			{header && (
+				<Box>
+					{header ? (
+						cloneElement(header, {index, index})
+					) : null
+					}
+				</Box>
+			)}
+			<Box ref={ref}
 				sx={{
-					height: '100%',
-					overflowX: 'hidden',
-					overflowY: 'auto',
-					display: 'flex',
-					flexDirection: 'column',
-					...(index < columns.length - 1 && {borderInlineEnd: `1px solid ${color.border_layout}`}),
-					...(sx && sx)
+					overflow: 'hidden',
+					flexGrow: 1,
+					position: 'relative',
+					...(topIntersecting ? overflow_shadow.top_hidden : overflow_shadow.top),
+					...(bottomIntersecting ? overflow_shadow.bottom_hidden : overflow_shadow.bottom),
+					...(!expanded && hiddenStyle)
 				}}
 			>
-				
-				{header && (
-					<Box>
-						{header ? (
-							cloneElement(header, {index, index})
-						) : null
-						}
-					</Box>
-				)}
-				<Box ref={ref}
+				<Box
 					sx={{
-						overflow: 'hidden',
-						flexGrow: 1,
-						position: 'relative',
-						...(topIntersecting ? overflow_shadow.top_hidden : overflow_shadow.top),
-						...(bottomIntersecting ? overflow_shadow.bottom_hidden : overflow_shadow.bottom),
+						overflow: 'auto',
+						padding: '0 16px',
+						position: 'absolute',
+						top: 0,
+						left: 0,
+						right: 0,
+						bottom: 0,
+					}}
+				>
+					<Box ref={refTop}/>
+						<Box sx={{padding: '16px 0'}}>
+							{children}
+						</Box>
+					<Box ref={refBottom}/>
+				</Box>
+			</Box>
+			{footer && (
+				<Box
+					sx={{
 						...(!expanded && hiddenStyle)
 					}}
 				>
-					<Box
-						sx={{
-							overflow: 'auto',
-							padding: '0 16px',
-							position: 'absolute',
-							top: 0,
-							left: 0,
-							right: 0,
-							bottom: 0,
-						}}
-					>
-						<Box ref={refTop}/>
-							<Box sx={{padding: '16px 0'}}>
-								{children}
-							</Box>
-						<Box ref={refBottom}/>
-					</Box>
+					{footer}
 				</Box>
-				{footer && (
-					<Box
-						sx={{
-							...(!expanded && hiddenStyle)
-						}}
-					>
-						{footer}
-					</Box>
-				)}
-			</Box>
+			)}
 		</Box>
 	)
 }
