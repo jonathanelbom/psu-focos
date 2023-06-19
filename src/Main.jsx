@@ -1,112 +1,122 @@
-import React, { createContext, useContext, useReducer } from 'react';
+import { Box,Tab, Tabs, Typography } from '@mui/material';
+import React from 'react';
 import { useApp } from './App';
-import { DummyContent, Column, padding } from './Components';
 import { Strategies } from './Strategies';
+import { color } from './styles';
+import { Models } from './Models';
+import { Compare } from './Compare';
+import { MainDialog } from './Dialogs';
 
-const tabStyle = {
-    padding,
-    color: '#fff',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    cursor: 'pointer'
-};
+const tabs = [
+    // { text: 'Explore', value: 'explore' },
+    { text: 'Strategies', value: 'strategies', component: Strategies },
+    { text: 'Compare', value: 'compare', component: Compare },
+    { text: 'Models', value: 'models', component: Models },
+];
 
-const selectedTabStyle = {
-    ...tabStyle,
-    color: '#383838',
-    backgroundColor: '#fff',
-    cursor: 'default'
-};
+const tabsMap = tabs.reduce((acc, {value, component}) => ({
+    ...acc,
+    [value]: component
+}), {});
 
 const TopNav = () => {
-    const {state, dispatch} = useApp();
-    const {tab} = state;
-    const tabs = [
-        {text: 'Explore', value: 'explore'},
-        {text: 'Strategies', value: 'strategies'},
-        {text: 'Compare', value: 'compare'}]
+    const { state, dispatch } = useApp();
+    const { primaryNav } = state;
     return (
-        <div
+        <Box
             style={{
-                display: 'grid',
-                gridTemplateRows: 'min-content 12px',
                 position: 'relative',
-                zIndex: 1,
-                boxShadow: '0 2px 8px rgba(0, 0, 0, .2)',
+                padding: '0 16px 0 0',
+                zIndex: 2,
+                backgroundColor: '#fff',
+                display: 'flex',
+                borderBlockEnd: `solid 1px ${color.border_layout}`,
             }}
         >
-            <div
-                style={{
-                    backgroundColor: '#383838',
+            <Typography
+                variant="h6"
+                onClick={() => {
+                    dispatch({
+                        type: 'LOG_STATE'
+                    })
+                }}
+                sx={{
+                    color: '#fff',
+                    padding: '0px 6px',
+                    margin: '8px',
+                    marginInlineEnd: '16px',
                     display: 'flex',
-                    alignItems: 'flex-end',
+                    alignItems: 'center',
+                    background: color.gray_500,
+                    // background: `linear-gradient(180deg, ${color.grad_dark_light} 0%, ${color.grad_dark_medium} 50%, ${color.grad_dark_dark} 50%, ${color.grad_dark_light} 100%)`,
                 }}
             >
-                    <div
-                        style={{
-                            fontSize: '24px',
-                            color: '#fff',
-                            padding,
-                            backgroundColor: '#282828',
-                        }}
-                    >
-                        <strong>FOCOS</strong>
-                    </div>
-                    <div
-                        style={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            padding: '0 32px',
-                            flexGrow: 1,
-                            justifyContent: 'flex-start'
-                        }}
-                    >
-                        {tabs.map(({text, value}) => (
-                            <div
-                                key={text}
-                                style={tab === value ? selectedTabStyle : tabStyle}
-                                {...(tab !== value && {onClick: () => {
-                                    dispatch({
+                FOCOS
+            </Typography>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexGrow: 1,
+                    justifyContent: 'flex-start',
+                    // order: 0,
+                }}
+            >
 
+
+                <Tabs
+                    value={primaryNav}
+                    onChange={() => { }}
+                    aria-label="main navigation tabs"
+                >
+                    {tabs.map(({ text, value }) => (
+                        <Tab
+                            label={text}
+                            key={text}
+                            value={value}
+                            {...(primaryNav !== value && {
+                                onClick: () => {
+                                    dispatch({
+                                        type: 'SET_NAV',
+                                        value: {primaryNav: value},
+                                        // value: {
+                                        //     primaryNav: value
+                                        // }
                                     })
-                                }})}
-                            >
-                                {text}
-                            </div>
-                        ))}
-                    </div>
-            </div>
-            <div style={{backgroundColor: '#fff'}} />
-        </div>
-    )  
+                                }
+                            })}
+                        >
+                            {text}
+                        </Tab>
+                    ))}
+                </Tabs>
+            </Box>
+        </Box>
+    )
 }
 
 export const Main = () => {
-  const {state, dispatch} = useApp();
-  const {tab} = state;
-  const MainContent = {
-    'explore': () => <div>{'Explore'}</div>,
-    'strategies': Strategies,
-    'compare': () => <div>{'Explore'}</div>,
-  }[tab]
-  return (
-    <div
-        style={{
-            height: '100vh',
-            overflow: 'auto',
-            display: 'grid',
-            gridTemplateRows: 'min-content 1fr',
-        }}
-    >
-        <TopNav />
+    const { state } = useApp();
+    const { primaryNav } = state;
+    const MainContent = tabsMap[primaryNav];
+    return (
         <div
             style={{
-                backgroundColor: '#ccc',
-                overflow: 'auto'
+                height: '100vh',
+                overflow: 'auto',
+                display: 'grid',
+                gridTemplateRows: 'min-content 1fr',
             }}
         >
-            <MainContent/>
+            <TopNav />
+            <div
+                style={{
+                    backgroundColor: '#ccc',
+                    overflow: 'auto'
+                }}
+            >
+                <MainContent />
+            </div>
+            <MainDialog />
         </div>
-    </div>
-  );
+    );
 }
