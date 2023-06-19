@@ -1,47 +1,48 @@
 import React, { useMemo } from 'react';
-import { Typography, Tabs, Tab } from '@mui/material';
+import { Box, Card, IconButton, Typography, Tabs, Tab, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { AddCircle, Delete } from '@mui/icons-material';
 import { useApp } from './App';
-import { Column, ColumnHeader } from './Components';
-import { color } from './styles';
+import { Column, ColumnHeader, ColumnFooter, InputSlider } from './Components';
+import { button, card, color } from './styles';
+import { practices, slidersForDisplay } from './utils';
 import { ModelSelect } from './ModelSelect';
 
-
-const OutputPanel = () => {
+const ConfigurationPanel = () => {
     const { state } = useApp();
-    const {strategies, selectedStrategy, models, selectedModel} = state;
-    const hasStrategies = strategies && strategies.length > 0;
-    const strategy = hasStrategies && strategies.find(({id}) => id === selectedStrategy);
+    const {models, selectedModel} = state;
     const modelName = useMemo(
-        () => models.find(model => model.id === selectedModel)?.name || 'no model name found'
-        , [selectedModel]
-    )
+        () => models.find(model => model.id === selectedModel)?.name || 'no model name found',
+        [selectedModel]
+    );
+
     return (
-        <Typography><em>{`${strategy.name} output display using Model: ${modelName} goes here`}</em></Typography>
+        <Typography><em>{`Edit configuration display for Model: ${modelName}`}</em></Typography>
     )
 }
 
+
 const InfoPanel = () => {
     return (
-        <Typography><em>{`Strategies help and info display goes here`}</em></Typography>
+        <Typography><em>{`Model help and info display goes here`}</em></Typography>
     )
 }
 
 const tabs = [
-    {text: 'Output', value: 'output'},
+    {text: 'Configure', value: 'configure'},
     {text: 'Info', value: 'info'}
 ]
 
 export const ColumnTertiary = ({outerSx, onToggleExpanded, index}) => {
     const { state, dispatch } = useApp();
-    const {strategies, primaryNav, secondaryNav, tertiaryNav, selectedStrategy} = state;
-    const hasStrategies = strategies && strategies.length > 0;
-    const strategy = hasStrategies && strategies.find(({id}) => id === selectedStrategy);
-    const PanelContent = tertiaryNav === 'output' ? OutputPanel : InfoPanel
+    const {primaryNav, tertiaryNav, selectedModel, models} = state;
+    const model = models.find(({id}) => id === selectedModel);
+    const PanelContent = tertiaryNav === 'configure' ? ConfigurationPanel : InfoPanel
     const columnStyle = {backgroundColor: color.column_tertiary};
-    
-    if (!selectedStrategy) {
+    if (!selectedModel) {
         return (
-            <Column sx={columnStyle} index={index}/>
+            <Column sx={columnStyle} index={index}>
+                <Typography><em>{`Select a model on the left to configure it.`}</em></Typography>
+            </Column>
         );
     }
 
@@ -81,6 +82,11 @@ export const ColumnTertiary = ({outerSx, onToggleExpanded, index}) => {
                     {tertiaryNav === 'output' && <ModelSelect />}
                 </ColumnHeader>
             )}
+            // header={(
+            //     <ColumnHeader sx={{padding: 0, borderInlineEnd: 'none', }}>
+            //         {tertiaryNav === 'output' && <ModelSelect />}
+            //     </ColumnHeader>
+            // )}
         >
             <PanelContent />
         </Column>

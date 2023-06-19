@@ -1,16 +1,27 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tab, Tabs, TextField, Typography } from '@mui/material';
-import React, { useRef, useState } from 'react';
+import { Box,Tab, Tabs, Typography } from '@mui/material';
+import React from 'react';
 import { useApp } from './App';
 import { Strategies } from './Strategies';
 import { color } from './styles';
+import { Models } from './Models';
+import { Compare } from './Compare';
+import { MainDialog } from './Dialogs';
+
+const tabs = [
+    // { text: 'Explore', value: 'explore' },
+    { text: 'Strategies', value: 'strategies', component: Strategies },
+    { text: 'Compare', value: 'compare', component: Compare },
+    { text: 'Models', value: 'models', component: Models },
+];
+
+const tabsMap = tabs.reduce((acc, {value, component}) => ({
+    ...acc,
+    [value]: component
+}), {});
 
 const TopNav = () => {
     const { state, dispatch } = useApp();
     const { primaryNav } = state;
-    const tabs = [
-        { text: 'Explore', value: 'explore' },
-        { text: 'Strategies', value: 'strategies' },
-        { text: 'Compare', value: 'compare' }]
     return (
         <Box
             style={{
@@ -31,8 +42,9 @@ const TopNav = () => {
                 }}
                 sx={{
                     color: '#fff',
-                    padding: '0px 10px',
+                    padding: '0px 6px',
                     margin: '8px',
+                    marginInlineEnd: '16px',
                     display: 'flex',
                     alignItems: 'center',
                     background: color.gray_500,
@@ -45,7 +57,7 @@ const TopNav = () => {
                 sx={{
                     display: 'flex',
                     flexGrow: 1,
-                    justifyContent: 'flex-end',
+                    justifyContent: 'flex-start',
                     // order: 0,
                 }}
             >
@@ -65,9 +77,10 @@ const TopNav = () => {
                                 onClick: () => {
                                     dispatch({
                                         type: 'SET_NAV',
-                                        value: {
-                                            primaryNav: value
-                                        }
+                                        value: {primaryNav: value},
+                                        // value: {
+                                        //     primaryNav: value
+                                        // }
                                     })
                                 }
                             })}
@@ -81,134 +94,10 @@ const TopNav = () => {
     )
 }
 
-const AddStrategyDialogContent = ({onCloseDialog}) => {
-    const { state, dispatch } = useApp();
-    const { dialogData } = state;
-    const {isOpen, title, body, actions, componentName} = dialogData || {};
-    const [name, setName] = useState('Strategy');
-    const [description, setDescription] = useState('A description of this strategy');
-    return (
-        <>
-            <DialogContent>
-                <Box
-                    sx={{
-                        display: 'flex',
-                        flexDirection:'column',
-                        paddingTop: '4px',
-                        rowGap: '16px',
-                        minWidth: '400px'
-                    }}
-                >
-                    <TextField
-                        id="outlined-multiline-static"
-                        label="Name"
-                        multiline
-                        rows={1}
-                        onChange={(e) => setName(e.target.value)}
-                        value={name}
-                    />
-                    <TextField
-                        id="outlined-multiline-static"
-                        label="Description"
-                        multiline
-                        rows={4}
-                        onChange={(e) => setDescription(e.target.value)}
-                        value={description}
-                    />
-                </Box>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={onCloseDialog}>Cancel</Button>
-                {actions && actions.map(({label, action}, i) => (
-                    <Button
-                        key={`${label}-${i}`}
-                        autoFocus
-                        onClick={(e) => {
-                            onCloseDialog(e, label)
-                            dispatch({
-                                type: action.type,
-                                value: {
-                                    name,
-                                    description,
-                                }
-                            });
-                        }}
-                    >
-                        {label}
-                    </Button>
-                ))}
-            </DialogActions>
-        </>
-    )
-}
-
-const MainDialog = () => {
-    const { state, dispatch } = useApp();
-    const { dialogData } = state;
-    const {isOpen, title, body, actions, componentName} = dialogData || {};
-    const CustomComponent = {
-        addStrategy: AddStrategyDialogContent,
-    }[componentName];
-    const onCloseDialog = (e, reason) => {
-        dispatch({
-            type: 'SET_DIALOG_DATA',
-            value: {
-                ...dialogData,
-                isOpen: false
-            }
-        });
-    }
-    return (
-        <Dialog
-            open={!!isOpen}
-            onClose={onCloseDialog}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-        >
-            {title && (
-                <DialogTitle id="alert-dialog-title">
-                    {title}
-                </DialogTitle>
-            )}
-            {body && (
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        {body}
-                    </DialogContentText>
-                </DialogContent>
-            )}
-            {CustomComponent && (
-                <CustomComponent onCloseDialog={onCloseDialog}/>
-            )}
-            {!CustomComponent && (
-                <DialogActions>
-                    <Button onClick={onCloseDialog}>Cancel</Button>
-                    {actions && actions.map(({label, action}, i) => (
-                        <Button
-                            key={`${label}-${i}`}
-                            autoFocus
-                            onClick={(e) => {
-                                onCloseDialog(e, label)
-                                dispatch(action);
-                            }}
-                        >
-                            {label}
-                        </Button>
-                    ))}
-                </DialogActions>
-            )}
-        </Dialog>
-    );
-}
-
 export const Main = () => {
     const { state } = useApp();
     const { primaryNav } = state;
-    const MainContent = {
-        'explore': () => <Box sx={{ padding: '16px' }}><Typography><em>{'Explore flow goes here'}</em></Typography></Box>,
-        'strategies': Strategies,
-        'compare': () => <Box sx={{ padding: '16px' }}><Typography><em>{'Compare flow goes here'}</em></Typography></Box>,
-    }[primaryNav];
+    const MainContent = tabsMap[primaryNav];
     return (
         <div
             style={{

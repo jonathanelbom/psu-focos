@@ -131,7 +131,7 @@ export const practicesForCritique = practicesForDisplay.flatMap((category) => (
     ))
 ));
 
-export const makeId = (prefix = '', length = 6) => `${prefix}${Math.random().toString(36).substr(2, 2 + length)}`;
+export const makeId = (prefix = '') => `${prefix}${Math.random().toString(36).substr(2, 10)}`;
 
 const getRandomValue = (range = [0, 100]) =>
     range[0] + Math.round((range[1] - range[0]) * Math.random());
@@ -176,6 +176,23 @@ export const createStategy = (props = {}) => {
 	};
 }
 
+export const createModel = (props = {}, isDefault) => {
+    const id = makeId();
+	return {
+		id,
+		name: 'Model',
+		description: 'A description of this model',
+		version: 'V00.01',
+		lastModified: new Date(),
+        isDefault,
+		// critiques: [
+        //     createCritique(id),
+        // ],
+        // practices: createPractices(),
+		...props,
+	};
+}
+
 export const createCritique = (strategyId, props = {}) => {
 	const id = makeId();
 	return {
@@ -190,6 +207,7 @@ export const createCritique = (strategyId, props = {}) => {
 export const computeExpandedWidth = (expandedData, toggleIndex) => {
 	const {columns, size, collapsedWidth} = expandedData;
     let _columns = [...columns];
+    // console.log('_columns:', _columns);
     if (typeof toggleIndex === 'number') {
         _columns = columns.map((c, index) => (
             index === toggleIndex
@@ -212,4 +230,59 @@ export const computeExpandedWidth = (expandedData, toggleIndex) => {
         collapsedWidth,
         columns: _columns,
 	};
+}
+
+export const getNavValues = (value) => {
+    // console.log('getNavValues, value:', value);
+    const {primaryNav, ...rest} = value;
+	const navs = {
+        strategies: {
+            primaryNav: 'strategies',
+            secondaryNav: 'strategy',
+            tertiaryNav: 'output',
+        },
+        models: {
+            primaryNav: 'models',
+            tertiaryNav: 'configure',
+        },
+        compare: {
+            primaryNav: 'compare',
+            tertiaryNav: 'output',
+        },
+        ['']: {}
+    }[primaryNav];
+    return {
+        ...navs,
+        ...rest
+    }
+}
+
+export const getColumns = (primaryNav = '') => {
+	const column = {
+        strategies: {
+            size: 4,
+            columns: [
+                {size: 1, expanded: true, collapsable: true, width: `${1/4 * 100}%`},
+                {size: 1, expanded: true, collapsable: true, width: `${1/4 * 100}%`},
+                {size: 2, expanded: true, collapsable: false, width: `${2/4 * 100}%`}
+            ]
+        },
+        models: {
+            size: 4,
+            columns: [
+                {size: 1, expanded: true, collapsable: true, width: `${1/4 * 100}%`},
+                {size: 3, expanded: true, collapsable: false, width: `${3/4 * 100}%`}
+            ]
+        },
+        compare: {
+            size: 4,
+            columns: [
+                {size: 1, expanded: true, collapsable: true, width: `${1/4 * 100}%`},
+                {size: 3, expanded: true, collapsable: false, width: `${3/4 * 100}%`}
+            ]
+        },
+        ['']: {}
+    }[primaryNav];
+    // console.log('primaryNav:', primaryNav, ', column:', column);
+    return column;
 }

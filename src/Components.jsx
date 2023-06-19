@@ -129,7 +129,7 @@ export const ColumnHeader = ({ children, sx, index}) => {
 				{expanded && (
 					<Box>{content}</Box>
 				)}
-				<Box sx={{padding: '4px 0', width: '100%', display: 'flex', justifyContent: 'flex-end'}}>
+				<Box sx={{padding: '4px 0', /* width: '100%',*/ display: 'flex', justifyContent: 'flex-end'}}>
 					<IconButton
 						variant=""
 						aria-label="delete"
@@ -174,6 +174,7 @@ export const ColumnFooter = ({ children, sx }) => {
 export const Column = ({ header, children, footer, sx, outerSx, onToggleExpanded, isExpanded, index }) => {
 	const { state, dispatch } = useApp();
 	const {columns} = state.expandedData;
+	// console.log('Column\nindex:', index, '\ncolumns:', columns, '\n');
 	const {expanded, width} = columns[index];
 	const [topIntersecting, setTopIntersecting] = useState(false);
 	const [bottomIntersecting, setBottomIntersecting] = useState(false);

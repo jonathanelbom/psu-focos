@@ -223,7 +223,7 @@ export const ColumnSecondary = ({outerSx, onToggleExpanded, index}) => {
     const strategy = hasStrategies && strategies.find(({id}) => id === selectedStrategy);
     const tabs = [
         {text: 'Practices', value: 'strategy'},
-        {text: 'Critiques', value: 'critiques'}
+        // {text: 'Critiques', value: 'critiques'}
     ]
     const Content = {
         'strategy': StrategyValues,
@@ -259,50 +259,7 @@ export const ColumnSecondary = ({outerSx, onToggleExpanded, index}) => {
             {...(outerSx && {outerSx})}
             {...(onToggleExpanded && {onToggleExpanded})}
             index={index}
-            header={(
-                <ColumnHeader
-                    sx={{
-                        padding: 0
-                    }}
-                >
-                    <Tabs
-                        value={secondaryNav}
-                        onChange={() => {}}
-                        centered
-                        aria-label="main navigation tabs"
-                    >
-                        {tabs.map(({text, value}) => (
-                            <Tab
-                                label={text}
-                                key={text}
-                                value={value}
-                                disabled={['explore', 'compare'].includes(value)}
-                                {...(secondaryNav !== value && {onClick: () => onClick(value)})}
-                            >
-                                {text}
-                            </Tab>
-                        ))}
-                    </Tabs>
-                </ColumnHeader>
-            )}
-            {...(secondaryNav === 'critiques' && {
-                footer: (
-                    <ColumnFooter>
-                        <Button
-                            variant="outlined"
-                            startIcon={<AddCircle />}
-                            sx={button.footer}
-                            onClick={() => {
-                                dispatch({
-                                    type: 'ADD_CRITIQUE',
-                                })
-                            }}
-                        >
-                            Add Critique
-                        </Button>
-                    </ColumnFooter>
-                )
-            })}
+            header={<ColumnHeader>Practices</ColumnHeader>}
         >
             <Content/>
         </Column>

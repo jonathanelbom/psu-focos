@@ -5,24 +5,27 @@ import { Column, ColumnHeader } from './Components';
 import { color } from './styles';
 import { ModelSelect } from './ModelSelect';
 
-
 const OutputPanel = () => {
     const { state } = useApp();
-    const {strategies, selectedStrategy, models, selectedModel} = state;
-    const hasStrategies = strategies && strategies.length > 0;
-    const strategy = hasStrategies && strategies.find(({id}) => id === selectedStrategy);
+    const {compares, strategies, models, selectedModel} = state;
     const modelName = useMemo(
-        () => models.find(model => model.id === selectedModel)?.name || 'no model name found'
-        , [selectedModel]
-    )
+        () => models.find(model => model.id === selectedModel)?.name || 'no model name found',
+        [selectedModel]
+    );
+    const compareNames = useMemo(
+        () => compares.map(id => strategies.find((strategy) => strategy.id === id)?.name || '[Strategy name not found]'),
+        [compares.length]
+    );
+    
     return (
-        <Typography><em>{`${strategy.name} output display using Model: ${modelName} goes here`}</em></Typography>
+        <Typography><em>{`Output display comparing [${compareNames.join(', ')}] using Model: ${modelName} goes here`}</em></Typography>
     )
 }
 
+
 const InfoPanel = () => {
     return (
-        <Typography><em>{`Strategies help and info display goes here`}</em></Typography>
+        <Typography><em>{`Compare help and info display goes here`}</em></Typography>
     )
 }
 
@@ -33,16 +36,16 @@ const tabs = [
 
 export const ColumnTertiary = ({outerSx, onToggleExpanded, index}) => {
     const { state, dispatch } = useApp();
-    const {strategies, primaryNav, secondaryNav, tertiaryNav, selectedStrategy} = state;
-    const hasStrategies = strategies && strategies.length > 0;
-    const strategy = hasStrategies && strategies.find(({id}) => id === selectedStrategy);
+    const {compares, primaryNav, tertiaryNav} = state;
     const PanelContent = tertiaryNav === 'output' ? OutputPanel : InfoPanel
     const columnStyle = {backgroundColor: color.column_tertiary};
     
-    if (!selectedStrategy) {
+    if (compares.length < 2) {
         return (
-            <Column sx={columnStyle} index={index}/>
-        );
+            <Column sx={columnStyle} index={index}>
+                <Typography><em>{`Select 2 or more strategies on the left to compare.`}</em></Typography>
+            </Column>
+        )    
     }
 
     return (
@@ -81,6 +84,11 @@ export const ColumnTertiary = ({outerSx, onToggleExpanded, index}) => {
                     {tertiaryNav === 'output' && <ModelSelect />}
                 </ColumnHeader>
             )}
+            // header={(
+            //     <ColumnHeader sx={{padding: 0, borderInlineEnd: 'none', }}>
+            //         {tertiaryNav === 'output' && <ModelSelect />}
+            //     </ColumnHeader>
+            // )}
         >
             <PanelContent />
         </Column>
