@@ -12,7 +12,6 @@ export const ModelSelect = () => {
             <FormControl size = "small" >
                 <InputLabel id="demo-simple-select-label"></InputLabel>
                 <Select
-                    // labelId="demo-simple-select-label"
                     id="demo-simple-select"
                     value={selectedModel}
                     label=""

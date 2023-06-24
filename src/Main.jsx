@@ -48,7 +48,6 @@ const TopNav = () => {
                     display: 'flex',
                     alignItems: 'center',
                     background: color.gray_500,
-                    // background: `linear-gradient(180deg, ${color.grad_dark_light} 0%, ${color.grad_dark_medium} 50%, ${color.grad_dark_dark} 50%, ${color.grad_dark_light} 100%)`,
                 }}
             >
                 FOCOS
@@ -58,11 +57,8 @@ const TopNav = () => {
                     display: 'flex',
                     flexGrow: 1,
                     justifyContent: 'flex-start',
-                    // order: 0,
                 }}
             >
-
-
                 <Tabs
                     value={primaryNav}
                     onChange={() => { }}
@@ -78,9 +74,6 @@ const TopNav = () => {
                                     dispatch({
                                         type: 'SET_NAV',
                                         value: {primaryNav: value},
-                                        // value: {
-                                        //     primaryNav: value
-                                        // }
                                     })
                                 }
                             })}

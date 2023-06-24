@@ -136,11 +136,11 @@ export const makeId = (prefix = '') => `${prefix}${Math.random().toString(36).su
 const getRandomValue = (range = [0, 100]) =>
     range[0] + Math.round((range[1] - range[0]) * Math.random());
 
-const createPractices = () => (
+const createPractices = (useRandomValue) => (
     Object.keys(practices).reduce((acc, cur) => {
         acc[cur] = {
             ...practices[cur],
-            value: getRandomValue(),
+            value: useRandomValue ? getRandomValue() : 0,
         };
         return acc;
     }, {})
@@ -154,13 +154,10 @@ export const getSelected = (strategies) => {
             selectedCritique: strategy.critiques.length > 0 ? strategy.critiques[0].id : '',
         }
     }
-    return {
-        selectedStrategy: '',
-        selectedCritique: '',
-    }
+    return {selectedStrategy: ''}
 }
 
-export const createStategy = (props = {}) => {
+export const createStategy = (props = {}, useRandomValues) => {
     const id = makeId();
 	return {
 		id,
@@ -168,10 +165,7 @@ export const createStategy = (props = {}) => {
 		description: 'A description of this strategy',
 		model: 'V00.01',
 		lastModified: new Date(),
-		critiques: [
-            createCritique(id),
-        ],
-        practices: createPractices(),
+        practices: createPractices(useRandomValues),
 		...props,
 	};
 }
@@ -185,21 +179,6 @@ export const createModel = (props = {}, isDefault) => {
 		version: 'V00.01',
 		lastModified: new Date(),
         isDefault,
-		// critiques: [
-        //     createCritique(id),
-        // ],
-        // practices: createPractices(),
-		...props,
-	};
-}
-
-export const createCritique = (strategyId, props = {}) => {
-	const id = makeId();
-	return {
-		id,
-        strategyId,
-		name: 'Critique',
-		practice: '',
 		...props,
 	};
 }
@@ -283,6 +262,5 @@ export const getColumns = (primaryNav = '') => {
         },
         ['']: {}
     }[primaryNav];
-    // console.log('primaryNav:', primaryNav, ', column:', column);
     return column;
 }

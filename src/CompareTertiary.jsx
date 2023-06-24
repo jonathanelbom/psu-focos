@@ -84,11 +84,6 @@ export const ColumnTertiary = ({outerSx, onToggleExpanded, index}) => {
                     {tertiaryNav === 'output' && <ModelSelect />}
                 </ColumnHeader>
             )}
-            // header={(
-            //     <ColumnHeader sx={{padding: 0, borderInlineEnd: 'none', }}>
-            //         {tertiaryNav === 'output' && <ModelSelect />}
-            //     </ColumnHeader>
-            // )}
         >
             <PanelContent />
         </Column>

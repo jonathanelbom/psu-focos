@@ -1,10 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { Box, Card, IconButton, Typography, Button} from '@mui/material';
 import { AddCircle, Delete, Edit } from '@mui/icons-material';
 import { useApp } from './App';
 import { Column, ColumnHeader, ColumnFooter } from './Components';
 import { card, color, columnBoxShadow } from './styles';
 import { debug } from './utils';
+import { useScrollIntoView } from './useScrollIntoView';
 
 const Compare = ({data}) => {
     const {state, dispatch} = useApp();
@@ -12,7 +13,6 @@ const Compare = ({data}) => {
     const {id, name, description, version, isDefault, lastModified} = data;
     
     const isCompared = compares.some((compare) => compare === id);
-    // console.log('compares:', compares);
 
     return (
         <Card
@@ -25,10 +25,10 @@ const Compare = ({data}) => {
                     boxShadow: `0 0 0 2px ${color.blue_700}`,
                     backgroundColor: color.blue_50,
                 })
-            }}    
+            }}
+            data-id={id} 
             onClick={() => {
                 dispatch({
-                    // type: 'SET_SELECTED_MODEL',
                     type: 'TOGGLE_COMPARING',
                     value: id,
                 });
@@ -50,33 +50,6 @@ const Compare = ({data}) => {
                 >
                     {name}<em>{debug ? ` ${id}` : ''}</em>
                 </Typography>
-                {/* {!isDefault && (
-                    <IconButton
-                        sx={{transform: 'translate(6px, -6px)'}}
-                        aria-label="delete"
-                        size="small"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            dispatch({
-                                type: 'SET_DIALOG_DATA',
-                                value: {
-                                    isOpen: true,
-                                    title: 'Delete Model',
-                                    body: `Are you sure you want to delete ${name}. This action cannout be undone.`,
-                                    actions: [{
-                                        label: 'Delete',
-                                        action: {
-                                            type: 'REMOVE_MODEL',
-                                            value: id
-                                        }
-                                    }]
-                                }
-                            });
-                        }}
-                    >
-                        <Delete fontSize="small"/>
-                    </IconButton>
-                )} */}
             </Box>
             <Box
                 sx={{
@@ -109,6 +82,9 @@ export const ColumnPrimary = ({outerSx, index}) => {
     const { state, dispatch } = useApp();
     const {strategies, compares} = state;
     const hasStrategies = strategies && strategies.length > 0;
+    const columnRef = useRef(null);
+
+    useScrollIntoView(columnRef, compares[0] || '', strategies.length);
 
     return (
         <Column
@@ -116,37 +92,7 @@ export const ColumnPrimary = ({outerSx, index}) => {
             {...(outerSx && {outerSx})}
             header={<ColumnHeader>Strategies to compare</ColumnHeader>}
             index={index}
-            // footer={
-            //     <ColumnFooter>
-            //         <Button
-            //             variant="outlined"
-            //             startIcon={<AddCircle />}
-            //             sx={button.footer}
-            //             onClick={() => {
-            //                 // dispatch({
-            //                 //     type: 'ADD_STRATEGY'
-            //                 // })
-            //                 dispatch({
-            //                     type: 'SET_DIALOG_DATA',
-            //                     value: {
-            //                         isOpen: true,
-            //                         title: 'Add Model',
-            //                         // body: `Are you sure you want to delete ${name}. This action cannout be undone and all Critiques in this strategy will also be deleted.`,
-            //                         componentName: 'addModel',
-            //                         actions: [{
-            //                             label: 'Add Model',
-            //                             action: {
-            //                                 type: 'ADD_MODEL',
-            //                             }
-            //                         }]
-            //                     }
-            //                 });
-            //             }}
-            //         >
-            //             Add Model
-            //         </Button>
-            //     </ColumnFooter>
-            // }
+            ref={columnRef}
         >
             <Box
                 sx={{

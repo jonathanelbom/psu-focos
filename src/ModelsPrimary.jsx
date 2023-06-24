@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Box, Card, IconButton, Typography, Button} from '@mui/material';
 import { AddCircle, Delete, Edit } from '@mui/icons-material';
 import { useApp } from './App';
 import { Column, ColumnHeader, ColumnFooter } from './Components';
 import { button, card, color, columnBoxShadow } from './styles';
 import { debug } from './utils';
+import { useScrollIntoView } from './useScrollIntoView';
 
 const Model = ({data}) => {
     const {state, dispatch} = useApp();
@@ -21,7 +22,8 @@ const Model = ({data}) => {
                     boxShadow: `0 0 0 2px ${color.blue_700}`,
                     backgroundColor: color.blue_50,
                 })
-            }}    
+            }}
+            data-id={id}   
             onClick={() => {
                 dispatch({
                     type: 'SET_SELECTED_MODEL',
@@ -102,15 +104,19 @@ const Model = ({data}) => {
 
 export const ColumnPrimary = ({outerSx, index}) => {
     const { state, dispatch } = useApp();
-    const {models} = state;
+    const {models, selectedModel} = state;
     const hasModels = models && models.length > 0;
+    const columnRef = useRef(null);
 
+    useScrollIntoView(columnRef, selectedModel, models.length);
+    
     return (
         <Column
             sx={{ backgroundColor: color.column_primary, ...columnBoxShadow, zIndex: 3}}
             {...(outerSx && {outerSx})}
             header={<ColumnHeader>Models</ColumnHeader>}
             index={index}
+            ref={columnRef}
             footer={
                 <ColumnFooter>
                     <Button
@@ -118,15 +124,11 @@ export const ColumnPrimary = ({outerSx, index}) => {
                         startIcon={<AddCircle />}
                         sx={button.footer}
                         onClick={() => {
-                            // dispatch({
-                            //     type: 'ADD_STRATEGY'
-                            // })
                             dispatch({
                                 type: 'SET_DIALOG_DATA',
                                 value: {
                                     isOpen: true,
                                     title: 'Add Model',
-                                    // body: `Are you sure you want to delete ${name}. This action cannout be undone and all Critiques in this strategy will also be deleted.`,
                                     componentName: 'addModel',
                                     actions: [{
                                         label: 'Add Model',

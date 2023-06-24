@@ -8,9 +8,7 @@ export const AppReducer = (state, action) => {
 	switch (type) {
 		case 'SET_NAV':
 			const {primaryNav, secondaryNav, tertiaryNav} = getNavValues(value);
-            // console.log('value:', value);
-            // console.log('primaryNav:', primaryNav, ', secondaryNav:', secondaryNav, ', tertiaryNav:', tertiaryNav);
-			return {
+            return {
 				...state,
 				primaryNav,
 				secondaryNav,
@@ -41,11 +39,6 @@ export const AppReducer = (state, action) => {
 				...state,
 				selectedModel: value,
 			};
-		// case 'SET_SELECTED_CRITIQUE':
-		// 	return {
-		// 		...state,
-		// 		selectedCritique: value,
-		// 	};			
 		case 'UPDATE_STRATEGY':
 			return {
 				...state,
@@ -60,14 +53,14 @@ export const AppReducer = (state, action) => {
 			return {
 				...state,
 				selectedStrategy: strategy.id,
-				strategies: [strategy, ...state.strategies]
+				strategies: [...state.strategies, strategy]
 			};
 		case 'ADD_MODEL':
 			const model = createModel(value || {});
 			return {
 				...state,
 				selectedModel: model.id,
-				models: [model, ...state.models]
+				models: [...state.models, model]
 			};
 		case 'SET_PRACTICE':
 			const {critiqueId, practice} = value;

@@ -1,4 +1,4 @@
-import React, { cloneElement, useEffect, useRef, useState } from 'react';
+import React, { cloneElement, forwardRef, useEffect, useRef, useState } from 'react';
 import { Box, Typography, Grid, Slider, Input, IconButton } from '@mui/material';
 import { useApp } from './App';
 import { color, overflow_shadow, scroll_signifier, scroll_signifier_base, scroll_signifier_height, shadow_line } from './styles';
@@ -171,14 +171,14 @@ export const ColumnFooter = ({ children, sx }) => {
 
 
 
-export const Column = ({ header, children, footer, sx, outerSx, onToggleExpanded, isExpanded, index }) => {
+const _Column = ({ header, children, footer, sx, outerSx, onToggleExpanded, isExpanded, index }, ref) => {
 	const { state, dispatch } = useApp();
 	const {columns} = state.expandedData;
 	// console.log('Column\nindex:', index, '\ncolumns:', columns, '\n');
 	const {expanded, width} = columns[index];
 	const [topIntersecting, setTopIntersecting] = useState(false);
 	const [bottomIntersecting, setBottomIntersecting] = useState(false);
-	const ref = useRef(null);
+	const _ref = useRef(null);
 	const refTop = useRef(null);
 	const refBottom = useRef(null);
 	const callback = (entries, observer) => {
@@ -190,7 +190,7 @@ export const Column = ({ header, children, footer, sx, outerSx, onToggleExpanded
 		});
 	}
 	useEffect(() => {
-		const options = { root: ref.current, margin: 0 };
+		const options = { root: _ref.current, margin: 0 };
 		const observerTop = new IntersectionObserver(callback, options);
 		const observerBottom = new IntersectionObserver(callback, options);
 		refTop.current && observerTop.observe(refTop.current);
@@ -226,7 +226,7 @@ export const Column = ({ header, children, footer, sx, outerSx, onToggleExpanded
 					}
 				</Box>
 			)}
-			<Box ref={ref}
+			<Box ref={_ref}
 				sx={{
 					overflow: 'hidden',
 					flexGrow: 1,
@@ -246,6 +246,7 @@ export const Column = ({ header, children, footer, sx, outerSx, onToggleExpanded
 						right: 0,
 						bottom: 0,
 					}}
+					ref={ref}
 				>
 					<Box ref={refTop}/>
 						<Box sx={{padding: '16px 0'}}>
@@ -266,3 +267,5 @@ export const Column = ({ header, children, footer, sx, outerSx, onToggleExpanded
 		</Box>
 	)
 }
+
+export const Column = forwardRef(_Column);

@@ -1,141 +1,9 @@
 import React from 'react';
-import { Box, Card, IconButton, Typography, Tabs, Tab, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import { AddCircle, Delete, StickyNote2 } from '@mui/icons-material';
+import { Box, Typography } from '@mui/material';
 import { useApp } from './App';
-import { Column, ColumnHeader, ColumnFooter, InputSlider } from './Components';
-import { button, card, color, columnBoxShadow } from './styles';
-import { debug, practicesForCritique, practicesForDisplay } from './utils';
-
-const Critique = ({data}) => {
-    const {id, name, practice} = data;
-    const { state, dispatch } = useApp();
-    const {selectedCritique} = state;
-    const fontStyle = {fontSize: '14px'}
-    
-    return (
-        <Card
-            tabIndex={0}    
-            sx={{
-                transition: 'none',
-                cursor: 'pointer',
-                padding: '12px',
-                ...(id === selectedCritique && {
-                    boxShadow: `0 0 0 2px ${color.blue_700}`,
-                    backgroundColor: color.blue_50,
-                })
-            }}    
-            onClick={() => {
-                dispatch({
-                    type: 'SET_SELECTED_CRITIQUE',
-                    value: data.id,
-                });
-            }}
-        >
-            <Box
-                sx={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    columnGap: '8px',
-                }}
-            >
-                <Typography variant='h6'
-                    sx={{
-                        ...card.title,
-                        flexGrow: 1,
-                        wordBreak: 'break-all'
-                    }}
-                >
-                     {name}<em>{debug ? ` ${id}` : ''}</em>
-                </Typography>
-                <IconButton
-                    sx={{transform: 'translate(6px, -6px)'}}
-                    aria-label="delete"
-                    size="small"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        dispatch({
-                            type: 'SET_DIALOG_DATA',
-                            value: {
-                                isOpen: true,
-                                title: 'Delete Critique',
-                                body: `Are you sure you want to delete ${name}. This action cannout be undone.`,
-                                actions: [{
-                                    label: 'Delete',
-                                    action: {
-                                        type: 'REMOVE_CRITIQUE',
-                                        value: id
-                                    }
-                                }]
-                            }
-                        })
-                    }}
-                >
-                    <Delete />
-                </IconButton>
-            </Box>
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    rowGap: '6px',
-                }}
-            >
-                  <Typography variant='body2'>
-                    {'Select a PRACTICE to critique'}
-                </Typography>
-                <FormControl fullWidth size="small">
-                    <InputLabel id="demo-simple-select-label"></InputLabel>
-                    <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={practice}
-                        label=""
-                        onClick={(e) => e.stopPropagation()}
-                        onChange={(e) => {
-                            dispatch({
-                                type: 'SET_PRACTICE',
-                                value: {
-                                    critiqueId: id,
-                                    practice: e.target.value,
-                                }
-                            })
-                        }}
-                        sx={{ backgroundColor: '#fff', ...fontStyle}}
-                    >
-                        <MenuItem value="" sx={fontStyle}><em>Select a practice</em>
-                        </MenuItem>
-                        {practicesForCritique.map(({id, label}) => (
-                            <MenuItem key={id} value={id} sx={fontStyle}>{label}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-            </Box>
-        </Card>
-    );
-}
-
-const Critiques = () => {
-    const { state, dispatch } = useApp();
-    const {strategies, selectedStrategy} = state;
-    const strategy = strategies.find(({id}) => id === selectedStrategy) || {critiques: []};
-    const {critiques} = strategy;
-    return (
-        <Box
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                rowGap: '16px'
-            }}
-        >
-            {!critiques || critiques.length < 1 && <Typography><em>{'Use the button below to add a Critique.'}</em></Typography>}
-            {critiques.map((critique) => {
-                return (
-                    <Critique data={critique} key={critique.id}/>
-                )
-            })}
-        </Box>
-    );
-}
+import { Column, ColumnHeader, InputSlider } from './Components';
+import { color, columnBoxShadow } from './styles';
+import { practicesForDisplay } from './utils';
 
 const StrategyValues = () => {
     const { state, dispatch } = useApp();
@@ -217,31 +85,17 @@ const StrategyValues = () => {
 }
 
 export const ColumnSecondary = ({outerSx, onToggleExpanded, index}) => {
-    const { state, dispatch } = useApp();
-    const {strategies, secondaryNav, selectedStrategy, selectedCritique} = state;
+    const { state } = useApp();
+    const {strategies, selectedStrategy} = state;
     const hasStrategies = strategies && strategies.length > 0;
     const strategy = hasStrategies && strategies.find(({id}) => id === selectedStrategy);
-    const tabs = [
-        {text: 'Practices', value: 'strategy'},
-        // {text: 'Critiques', value: 'critiques'}
-    ]
-    const Content = {
-        'strategy': StrategyValues,
-        'critiques': Critiques,
-    }[secondaryNav];
-    const onClick = (value) => {
-        dispatch({
-            type: 'SET_NAV',
-            value: {
-                secondaryNav: value,
-                tertiaryNav: value === 'critiques' ? 'model' : 'output',
-            }
-        })
-    };
     const columnStyle = {backgroundColor: color.column_secondary, ...columnBoxShadow, zIndex: 2};
     if (!hasStrategies) {
         return (
-            <Column sx={columnStyle} index={index}/>
+            <Column
+                sx={{backgroundColor: color.column_tertiary, zIndex: 2, borderInlineEnd: 'none'}}
+                index={index}
+            />
         );
     }
 
@@ -261,7 +115,7 @@ export const ColumnSecondary = ({outerSx, onToggleExpanded, index}) => {
             index={index}
             header={<ColumnHeader>Practices</ColumnHeader>}
         >
-            <Content/>
+            <StrategyValues/>
         </Column>
     )
 }
